@@ -241,7 +241,8 @@
         FRANC<span class="inline-block transform rotate-180">O</span> DESIGNIO
     </div>
 
-    <a href="#contact"
+    <!--FLOATING CONTACT PERSISTENT BUTTON-->
+    <a href="#contact" id="floating-contact-btn"
         class="fixed bottom-12 right-6 z-40 flex items-center gap-4 group cursor-none text-meta hover-target magnetic mix-blend-difference"
         data-strength="30">
         <div class="rotated-cta tracking-widest">LET'S WORK</div>
@@ -258,7 +259,7 @@
     <!-- ==========================================
          MAIN CONTENT WRAPPER
          ========================================== -->
-    <main id="main-content" class="opacity-0">
+    <main id="main-content">
 
         <!-- ==========================================
              SECTION 02: HERO (NEW SEQUENCE & ASCII EYE)
@@ -301,10 +302,10 @@
              SECTION 03: ABOUT
              ========================================== -->
         <section id="about" class="w-full min-h-screen pt-32 pb-48 px-6 lg:px-12 relative z-20 bg-[var(--bg)]">
-            <div class="flex justify-between w-full text-meta mb-24">
+            <!-- <div class="flex justify-between w-full text-meta mb-24">
                 <div class="split-line">ZAPOPAN / GUADALAJARA, MX</div>
                 <div class="split-line">AVAILABLE</div>
-            </div>
+            </div> -->
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-48">
                 <div class="md:col-span-7">
@@ -521,7 +522,7 @@
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none px-6 z-10 transition-opacity duration-300"
                 id="measurement-container">
                 <h2 id="footer-massive-text"
-                    class="text-[15vw] md:text-[18vw] leading-[0.85] font-serif tracking-tight text-center w-full select-none text-[var(--bg)]">
+                    class="text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center w-full select-none text-[var(--bg)]">
                     <!-- Javascript will populate this to measure exactly -->
                 </h2>
             </div>
@@ -529,7 +530,7 @@
             <div
                 class="relative z-10 flex flex-col md:flex-row justify-between w-full px-6 lg:px-12 mt-auto text-meta pointer-events-none">
                 <div class="flex flex-col gap-2 pointer-events-auto text-[var(--bg)]/70">
-                    <a href="mailto:design@francodesignio.com"
+                    <a href="mailto:designiofranco@gmail.com"
                         class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">DESIGN@FRANCODESIGNIO.COM</a>
                     <span>+52 33 0000 0000</span>
                 </div>
@@ -558,18 +559,20 @@
             smooth: true,
         });
 
-        lenis.stop(); // Wait for preloader & sequence
+        lenis.start(); // Start smooth scrolling immediately
 
         lenis.on('scroll', ScrollTrigger.update);
         gsap.ticker.add((time) => { lenis.raf(time * 1000); });
         gsap.ticker.lagSmoothing(0);
 
-        document.addEventListener("DOMContentLoaded", () => {
+        // Force scroll to top instantly before layout calculates and animations trigger
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
 
-            // Force scroll to top on reload to prevent animation breaking
-            if ('scrollRestoration' in history) {
-                history.scrollRestoration = 'manual';
-            }
+        document.addEventListener("DOMContentLoaded", () => {
+            // Backup scroll enforcing after DOM paint
             window.scrollTo(0, 0);
 
             // Custom Cursor Logic
@@ -793,6 +796,7 @@
             gsap.set("#intro-text-2", { opacity: 0, y: -30 });
             gsap.set("#ascii-container", { scale: 1.5, opacity: 0 });
             gsap.set("#hero-footer-text", { opacity: 0 });
+            gsap.set("#main-content", { opacity: 0 }); // Start hidden via GSAP so it can be animated back
 
             const scrambleInterval = setInterval(() => {
                 row1.innerText = Array(5).fill(0).map(() => charsArray[Math.floor(Math.random() * charsArray.length)]).join('');
@@ -812,7 +816,7 @@
 
                     tl.to([row1, row2], { opacity: 0, duration: 0.2 })
                         .to("#preloader-wipe", { top: "0%", duration: 0.6, ease: "expo.inOut" }, "-=0.1")
-                        .to("#main-content", { opacity: 1, duration: 0.1 }, "-=0.2")
+                        .to("#main-content", { opacity: 1, duration: 0.1 }, "-=0.2") // Re-added this line so content fades in
                         .to("#preloader", { yPercent: -100, duration: 0.8, ease: "expo.inOut" })
 
                         // Sped up hero fade-in by reducing duration and starting them while the preloader finishes sliding up
@@ -834,22 +838,37 @@
                     el.innerHTML = `<span class="line-mask"><span class="line-mask-inner block">${text}</span></span>`;
                     gsap.to(el.querySelector('.line-mask-inner'), {
                         y: "0%", duration: 1.2, ease: "expo.out",
-                        scrollTrigger: { trigger: el, start: "top 85%" }
+                        scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" }
                     });
                 });
 
                 gsap.utils.toArray('.cascade-text span').forEach((span, i) => {
                     gsap.fromTo(span, { opacity: 0, x: -15 }, {
                         opacity: 1, x: 0, duration: 1, ease: "power3.out",
-                        scrollTrigger: { trigger: ".cascade-text", start: "top 80%" }, delay: i * 0.05
+                        scrollTrigger: { trigger: ".cascade-text", start: "top 80%", toggleActions: "play none none reverse" }, delay: i * 0.05
                     });
                 });
 
                 gsap.utils.toArray('.sculpture-word').forEach((word, i) => {
                     gsap.fromTo(word, { opacity: 0, yPercent: 120, rotateZ: 2 }, {
                         opacity: 1, yPercent: 0, rotateZ: 0, duration: 1.2, ease: "expo.out",
-                        scrollTrigger: { trigger: word, start: "top 90%" }, delay: (i % 3) * 0.05
+                        scrollTrigger: { trigger: word, start: "top 90%", toggleActions: "play none none reverse" }, delay: (i % 3) * 0.05
                     });
+                });
+
+                // ==========================================
+                // HIDE FLOATING CONTACT BUTTON ON FOOTER
+                // ==========================================
+                gsap.to("#floating-contact-btn", {
+                    opacity: 0,
+                    pointerEvents: "none",
+                    duration: 0.3,
+                    scrollTrigger: {
+                        trigger: "#contact",
+                        start: "top 85%", // Starts fading just as the black footer begins pushing up the bottom of the screen
+                        end: "top 70%",   // Quickly fully hidden as the footer takes up more space
+                        scrub: true
+                    }
                 });
 
                 // ==========================================
@@ -866,7 +885,7 @@
                         y: "0%",
                         duration: 1.2,
                         ease: "expo.out",
-                        scrollTrigger: { trigger: processPin, start: "top 80%" }
+                        scrollTrigger: { trigger: processPin, start: "top 80%", toggleActions: "play none none reverse" }
                     });
 
                     // Calculate slightly shorter scroll distance for tighter feeling
@@ -899,7 +918,7 @@
                 workItems.forEach(item => {
                     gsap.fromTo(item,
                         { opacity: 0, y: 30 },
-                        { opacity: 1, y: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: item, start: "top 90%" } }
+                        { opacity: 1, y: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" } }
                     );
                 });
 
@@ -907,9 +926,19 @@
                 // MATTER.JS FOOTER PHYSICS 
                 // -----------------------------------------------------
                 const container = document.getElementById('physics-container');
-                const engine = Matter.Engine.create();
-                const world = engine.world;
+                let engine = Matter.Engine.create();
+                let world = engine.world;
                 let physicsInitialized = false;
+                let runner = null;
+
+                function resetPhysics() {
+                    if (runner) Matter.Runner.stop(runner);
+                    Matter.World.clear(world);
+                    Matter.Engine.clear(engine);
+                    container.innerHTML = ''; // Remove all cloned physical letters
+                    document.getElementById('measurement-container').style.opacity = '1'; // Show measurement container again for text plotting
+                    physicsInitialized = false;
+                }
 
                 function initPhysics() {
                     if (physicsInitialized) return;
@@ -928,22 +957,19 @@
                     const h2 = document.getElementById('footer-massive-text');
                     h2.innerHTML = '';
 
-                    const words = ["FRANCO", "DESIGNIO"];
+                    const words = ["LET'S", "CREATE", "SOMETHING"];
                     const measuredSpans = [];
 
                     words.forEach((word, wIdx) => {
                         word.split('').forEach((char) => {
                             const span = document.createElement('span');
                             span.style.display = 'inline-block';
-                            if (char === 'O' && wIdx === 0) {
-                                span.innerHTML = `<span class="inline-block transform rotate-180">${char}</span>`;
-                            } else {
-                                span.innerText = char;
-                            }
+                            span.innerText = char;
                             h2.appendChild(span);
-                            measuredSpans.push({ char, span, isO: char === 'O' && wIdx === 0 });
+                            measuredSpans.push({ char, span });
                         });
-                        if (wIdx === 0) {
+                        // Add line breaks between words so they stack properly in the DOM before calculating coordinates
+                        if (wIdx < words.length - 1) {
                             h2.appendChild(document.createElement('br'));
                         }
                     });
@@ -957,27 +983,22 @@
                         const y = rect.top - containerRect.top + rect.height / 2;
 
                         const clone = document.createElement('div');
-                        clone.className = "absolute text-[15vw] md:text-[18vw] leading-[0.85] font-serif tracking-tight text-center select-none text-[var(--bg)] pointer-events-none";
-                        if (item.isO) {
-                            clone.innerHTML = `<span class="inline-block transform rotate-180">${item.char}</span>`;
-                        } else {
-                            clone.innerText = item.char;
-                        }
+                        clone.className = "absolute text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center select-none text-[var(--bg)] pointer-events-none";
+                        clone.innerText = item.char;
 
                         clone.style.left = `${x}px`;
                         clone.style.top = `${y}px`;
                         clone.style.transform = `translate(-50%, -50%)`;
                         container.appendChild(clone);
 
-                        const bodyWidth = rect.width * 0.55;
-                        const bodyHeight = rect.height * 0.7;
+                        const bodyWidth = rect.width * 0.65; // Increased width and height logic to give letters more physical breathing room
+                        const bodyHeight = rect.height * 0.85;
 
                         const body = Matter.Bodies.rectangle(x, y, bodyWidth, bodyHeight, {
-                            restitution: 0.2,
+                            restitution: 0.3, // Slightly bouncier so they scatter more
                             friction: 0.8,
                             density: 0.05,
-                            chamfer: { radius: 10 },
-                            isStatic: true
+                            isStatic: true // Removed chamfer for squarer, cleaner stacking
                         });
 
                         letters.push({ element: clone, body: body });
@@ -995,7 +1016,7 @@
                             });
                             Matter.Body.setAngularVelocity(item.body, (Math.random() - 0.5) * 0.15);
                         });
-                    }, 1200);
+                    }, 2200);
 
                     const mouse = Matter.Mouse.create(container);
                     const mouseConstraint = Matter.MouseConstraint.create(engine, {
@@ -1023,7 +1044,8 @@
                         });
                     });
 
-                    Matter.Runner.run(engine);
+                    runner = Matter.Runner.create();
+                    Matter.Runner.run(runner, engine);
 
                     window.addEventListener('resize', () => {
                         const newWidth = container.clientWidth;
@@ -1036,8 +1058,13 @@
                 ScrollTrigger.create({
                     trigger: "#contact",
                     start: "top 60%",
-                    onEnter: initPhysics,
-                    once: true
+                    onEnter: () => {
+                        resetPhysics();
+                        initPhysics();
+                    },
+                    onLeaveBack: () => {
+                        resetPhysics(); // Reset when scrolled completely out of view upwards
+                    }
                 });
             }
         });
