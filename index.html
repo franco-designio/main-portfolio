@@ -505,58 +505,6 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Floating Image Portal -->
-                <div id="floating-project-img"
-                    class="fixed top-0 left-0 pointer-events-none z-40 hidden md:block overflow-hidden bg-[var(--fg)]/10 backdrop-blur-md opacity-0 scale-75 rounded-sm"
-                    style="width: 450px; height: 320px; transform: translate(-50%, -50%); transform-origin: center;">
-                    <img src="" alt="Project thumbnail"
-                        class="w-full h-full object-cover mix-blend-luminosity opacity-80">
-                </div>
-            </div>
-        </section>
-
-        <!-- ==========================================
-             SECTION 06: PRINCIPLES
-             ========================================== -->
-        <section id="principles"
-            class="w-full py-32 px-6 lg:px-12 relative z-20 bg-[var(--bg)] border-t border-[var(--fg)]/20">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-32">
-                <div>
-                    <h2 class="text-display split-line">The flags<br><span class="italic font-serif">I stand for</span>
-                    </h2>
-                </div>
-                <div
-                    class="hidden md:block bg-[var(--fg)] aspect-video overflow-hidden hover-target clip-reveal rounded-sm">
-                    <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=1000&auto=format&fit=crop"
-                        class="w-full h-full object-cover mix-blend-multiply grayscale opacity-90 parallax-image"
-                        alt="Whiteboard session hands">
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-24 max-w-5xl">
-                <div class="principle-block flex flex-col gap-6">
-                    <h3 class="text-display leading-[0.85] tracking-tight">Human-<br><span
-                            class="italic font-serif">First</span></h3>
-                    <p class="text-body md:w-2/3 ml-auto mt-4 text-[var(--fg)]/80">People before process, before
-                        platforms, before anything else. I design with and for them. Every interface I build begins with
-                        real human needs, behaviors, and desires. Empathy is not a phase in my work — it is the
-                        foundation.</p>
-                </div>
-                <div class="principle-block flex flex-col gap-6">
-                    <h3 class="text-display leading-[0.85] tracking-tight">Evidence-<br><span
-                            class="italic font-serif">Led</span></h3>
-                    <p class="text-body md:w-2/3 ml-auto mt-4 text-[var(--fg)]/80">Intuition is a starting point, not an
-                        answer. I research before I decide, test before I ship, and revisit when the data says I was
-                        wrong. Good design is the result of asking better questions, not trusting better instincts.</p>
-                </div>
-                <div class="principle-block flex flex-col gap-6">
-                    <h3 class="text-display leading-[0.85] tracking-tight">Friction-<br><span
-                            class="italic font-serif">Aware</span></h3>
-                    <p class="text-body md:w-2/3 ml-auto mt-4 text-[var(--fg)]/80">Every moment of confusion is a design
-                        failure worth studying. I treat cognitive friction as a signal — not an annoyance — and follow
-                        it back to its source. Reducing it is not about simplifying. It is about understanding.</p>
-                </div>
             </div>
         </section>
 
@@ -604,7 +552,7 @@
         gsap.registerPlugin(ScrollTrigger);
 
         const lenis = new Lenis({
-            duration: 1.2,
+            duration: 0.8, // Faster, tighter smooth scrolling
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             direction: 'vertical',
             smooth: true,
@@ -867,10 +815,11 @@
                         .to("#main-content", { opacity: 1, duration: 0.1 }, "-=0.2")
                         .to("#preloader", { yPercent: -100, duration: 0.8, ease: "expo.inOut" })
 
-                        .to("#intro-text-1", { opacity: 1, y: 0, duration: 2.5, ease: "power3.out" }, "+=0.5")
-                        .to("#intro-text-2", { opacity: 1, y: 0, duration: 2.5, ease: "power3.out" }, "+=0.8")
-                        .to("#ascii-container", { scale: 1, opacity: 1, duration: 4, ease: "expo.out" }, "+=1.2")
-                        .to("#hero-footer-text", { opacity: 1, duration: 1.5, ease: "power2.out" }, "-=2");
+                        // Sped up hero fade-in by reducing duration and starting them while the preloader finishes sliding up
+                        .to("#intro-text-1", { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }, "-=0.6")
+                        .to("#intro-text-2", { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }, "-=0.4")
+                        .to("#ascii-container", { scale: 1, opacity: 1, duration: 2, ease: "expo.out" }, "-=0.4")
+                        .to("#hero-footer-text", { opacity: 1, duration: 1.0, ease: "power2.out" }, "-=1.0");
                 }
             }, 35);
 
@@ -911,11 +860,6 @@
                 const processCards = gsap.utils.toArray('.process-block-card');
 
                 if (processPin && processSlider && processCards.length) {
-                    // Duplicate cards once to ensure a long seamless runway
-                    processCards.forEach(card => {
-                        let clone = card.cloneNode(true);
-                        processSlider.appendChild(clone);
-                    });
 
                     // Animate Header Reveal inside the pin
                     gsap.to('.process-header-reveal', {
@@ -925,24 +869,25 @@
                         scrollTrigger: { trigger: processPin, start: "top 80%" }
                     });
 
-                    // Calculate the exact distance to slide left
-                    let getScrollAmount = () => -(processSlider.scrollWidth - window.innerWidth);
+                    // Calculate slightly shorter scroll distance for tighter feeling
+                    let getScrollAmount = () => -(processSlider.scrollWidth - window.innerWidth + 100);
 
                     gsap.to(processSlider, {
                         x: getScrollAmount,
-                        ease: "none",
+                        ease: "power1.inOut", // Added subtle easing instead of harsh linear
                         scrollTrigger: {
                             trigger: processPin,
                             start: "top top",
-                            end: () => `+=${processSlider.scrollWidth}`,
+                            end: () => `+=${processSlider.scrollWidth - window.innerWidth}`,
                             pin: true,
-                            scrub: 1,
+                            scrub: true, // Switched from 1 (lag) to true (instant 1-to-1 reaction)
                             invalidateOnRefresh: true,
                             onUpdate: (self) => {
                                 // Dynamically update the Phase counter based on scroll progress
-                                let totalCards = processCards.length * 2;
+                                let totalCards = processCards.length;
                                 let currentIdx = Math.floor(self.progress * totalCards);
-                                let phase = (currentIdx % 3) + 1;
+                                // Prevent currentIdx from exceeding the array bounds at progress=1
+                                let phase = Math.min(currentIdx, totalCards - 1) + 1;
                                 document.getElementById('process-counter').innerText = "0" + phase;
                             }
                         }
@@ -950,75 +895,13 @@
                 }
 
 
-                gsap.utils.toArray('.clip-reveal').forEach((container) => {
-                    let img = container.querySelector('.parallax-image');
-                    let tl = gsap.timeline({ scrollTrigger: { trigger: container, start: "top 85%" } });
-                    tl.to(container, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4, ease: "expo.inOut" })
-                        .fromTo(img, { scale: 1.2 }, { scale: 1, duration: 1.4, ease: "expo.inOut" }, "<");
-                });
-
-                gsap.utils.toArray('.principle-block').forEach((block) => {
-                    gsap.fromTo(block, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: block, start: "top 85%" } });
-                });
-
-                // Floating Project Image Logic
                 const workItems = document.querySelectorAll('.work-list-item');
-                const floatingImgContainer = document.getElementById('floating-project-img');
-
-                if (floatingImgContainer) {
-                    const floatingImg = floatingImgContainer.querySelector('img');
-
-                    let floatX = 0, floatY = 0;
-                    let targetFloatX = 0, targetFloatY = 0;
-                    let isHoveringWork = false;
-
-                    window.addEventListener('mousemove', (e) => {
-                        targetFloatX = e.clientX;
-                        targetFloatY = e.clientY;
-                    });
-
-                    function updateFloatingImg() {
-                        if (isHoveringWork) {
-                            floatX += (targetFloatX - floatX) * 0.1;
-                            floatY += (targetFloatY - floatY) * 0.1;
-                            floatingImgContainer.style.left = `${floatX}px`;
-                            floatingImgContainer.style.top = `${floatY}px`;
-                        }
-                        requestAnimationFrame(updateFloatingImg);
-                    }
-                    updateFloatingImg();
-
-                    workItems.forEach(item => {
-                        gsap.fromTo(item,
-                            { opacity: 0, y: 30 },
-                            { opacity: 1, y: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: item, start: "top 90%" } }
-                        );
-
-                        item.addEventListener('mouseenter', () => {
-                            isHoveringWork = true;
-                            if (Math.abs(floatX - targetFloatX) > 100 || Math.abs(floatY - targetFloatY) > 100) {
-                                floatX = targetFloatX;
-                                floatY = targetFloatY;
-                                floatingImgContainer.style.left = `${floatX}px`;
-                                floatingImgContainer.style.top = `${floatY}px`;
-                            }
-
-                            const imgSrc = item.getAttribute('data-img');
-                            floatingImg.src = imgSrc;
-
-                            gsap.killTweensOf(floatingImgContainer);
-                            gsap.killTweensOf(floatingImg);
-
-                            gsap.to(floatingImgContainer, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" });
-                            gsap.fromTo(floatingImg, { scale: 1.2 }, { scale: 1, duration: 0.6, ease: "power2.out" });
-                        });
-
-                        item.addEventListener('mouseleave', () => {
-                            isHoveringWork = false;
-                            gsap.to(floatingImgContainer, { opacity: 0, scale: 0.75, duration: 0.3, ease: "power2.in" });
-                        });
-                    });
-                }
+                workItems.forEach(item => {
+                    gsap.fromTo(item,
+                        { opacity: 0, y: 30 },
+                        { opacity: 1, y: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: item, start: "top 90%" } }
+                    );
+                });
 
                 // -----------------------------------------------------
                 // MATTER.JS FOOTER PHYSICS 
