@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FRANCO DESIGNIO — Human-Centered UX & Creative Technology</title>
+    <title>FRANCO DESIGNIO — Human-Centered Design & Creative Technology</title>
 
     <!-- Editorial Fonts: Instrument Serif & Instrument Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -260,11 +260,16 @@
          ========================================== -->
     <main id="main-content">
 
-        <!-- ==========================================
+        <!-- ASCII Canvas Target (Fixed Overlay behind content) -->
+        <div class="fixed inset-0 flex items-center justify-center z-[15] overflow-hidden pointer-events-none"
+            id="ascii-wrapper">
+            <pre id="ascii-container" class="pointer-events-none will-change-transform m-0 p-0 block text-left"
+                style="color: var(--fg); opacity: 0;"></pre>
+        </div> <!-- ==========================================
              SECTION 02: HERO (NEW SEQUENCE & ASCII EYE)
              ========================================== -->
         <section id="hero-ascii"
-            class="w-full h-screen relative z-10 bg-[var(--bg)] overflow-hidden flex flex-col items-center justify-between pt-32 pb-32">
+            class="w-full h-screen relative z-10 bg-transparent overflow-hidden flex flex-col items-center justify-between pt-32 pb-32">
 
             <!-- Top Phrase -->
             <h1 id="intro-text-1"
@@ -272,12 +277,7 @@
                 Creation is <span class="italic">Divine</span>
             </h1>
 
-            <!-- ASCII Canvas Target (Center background) -->
-            <div class="absolute inset-0 flex items-center justify-center z-10 overflow-hidden pointer-events-none"
-                id="ascii-wrapper">
-                <pre id="ascii-container" class="pointer-events-none will-change-transform m-0 p-0 block text-left"
-                    style="color: var(--fg); opacity: 0;"></pre>
-            </div>
+
 
             <div class="scanlines absolute inset-0 pointer-events-none z-20"></div>
 
@@ -306,7 +306,7 @@
         <!-- ==========================================
              SECTION 03: ABOUT
              ========================================== -->
-        <section id="about" class="w-full min-h-screen pt-32 pb-48 px-6 lg:px-12 relative z-20 bg-[var(--bg)]">
+        <section id="about" class="w-full min-h-screen pt-32 pb-48 px-6 lg:px-12 relative z-20 bg-transparent">
             <!-- <div class="flex justify-between w-full text-meta mb-24">
                 <div class="split-line">ZAPOPAN / GUADALAJARA, MX</div>
                 <div class="split-line">AVAILABLE</div>
@@ -358,7 +358,7 @@
              SECTION 04: PROCESS (HORIZONTAL SCROLL)
              ========================================== -->
         <section id="process-pin-container"
-            class="w-full h-screen relative z-20 bg-[var(--bg)] border-t border-[var(--fg)]/20 overflow-hidden flex flex-col justify-center">
+            class="w-full h-screen relative z-20 bg-transparent border-t border-[var(--fg)]/20 overflow-hidden flex flex-col justify-center">
 
             <!-- Fixed Header overlay during pin -->
             <div
@@ -891,7 +891,7 @@
                     scrollTrigger: {
                         trigger: "#hero-ascii",
                         start: "top top",
-                        end: "+=150%",
+                        end: "+=300%", // Extended runway for reading and final glitch out
                         pin: true,
                         scrub: true,
                     }
@@ -899,44 +899,78 @@
 
                 const scrambleStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*&%!";
                 const outDummy = { p: 0 };
+                const inDummy = { p: 0 };
 
-                heroScrollTl.to(outDummy, {
-                    p: 1,
-                    duration: 1,
-                    ease: "none",
-                    onUpdate: () => {
-                        const progress = outDummy.p;
-                        // Animate ASCII out
-                        outChars.forEach((span, i) => {
-                            const charThreshold = (i / outChars.length) * 0.7;
-                            let charP = (progress - charThreshold) / 0.3;
-                            charP = Math.max(0, Math.min(1, charP));
+                heroScrollTl
+                    // PHASE 1: Glitch out phrases 1 & 2
+                    .to(outDummy, {
+                        p: 1,
+                        duration: 1,
+                        ease: "none",
+                        onUpdate: () => {
+                            const progress = outDummy.p;
+                            outChars.forEach((span, i) => {
+                                const charThreshold = (i / outChars.length) * 0.7;
+                                let charP = (progress - charThreshold) / 0.3;
+                                charP = Math.max(0, Math.min(1, charP));
 
-                            if (span.dataset.o) {
-                                if (charP > 0 && charP < 1) {
-                                    if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
-                                    span.style.opacity = 1 - charP;
-                                } else if (charP >= 1) {
-                                    span.style.opacity = 0;
-                                    span.innerText = span.dataset.o;
+                                if (span.dataset.o) {
+                                    if (charP > 0 && charP < 1) {
+                                        if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
+                                        span.style.opacity = 1 - charP;
+                                    } else if (charP >= 1) {
+                                        span.style.opacity = 0;
+                                        span.innerText = span.dataset.o;
+                                    } else {
+                                        span.style.opacity = 1;
+                                        span.innerText = span.dataset.o;
+                                    }
                                 } else {
-                                    span.style.opacity = 1;
-                                    span.innerText = span.dataset.o;
+                                    span.style.opacity = 1 - charP;
                                 }
-                            } else {
-                                span.style.opacity = 1 - charP;
-                            }
-                        });
-                    }
-                }, 0)
-                    // Animate Sharp Typing In
+                            });
+                        }
+                    }, 0)
+                    // PHASE 2: Type in phrase 3 (overlaps end of Phase 1)
                     .to(inChars, {
                         opacity: 1,
                         stagger: 0.02,
-                        duration: 0.01,
+                        duration: 0.2, // Small duration since scrub applies it over scroll distance
                         ease: "none"
                     }, 0.5)
-                    .to("#hero-footer-text", { opacity: 0, duration: 0.5 }, 0);
+                    .to("#hero-footer-text", { opacity: 0, duration: 0.5 }, 0)
+
+                    // PHASE 3: Reading Pause (Timeline just advances empty space from 1.0 to 2.0)
+                    .to({}, { duration: 1 }, 1)
+
+                    // PHASE 4: Glitch out phrase 3
+                    .to(inDummy, {
+                        p: 1,
+                        duration: 1,
+                        ease: "none",
+                        onUpdate: () => {
+                            const progress = inDummy.p;
+                            inChars.forEach((span, i) => {
+                                const charThreshold = (i / inChars.length) * 0.7;
+                                let charP = (progress - charThreshold) / 0.3;
+                                charP = Math.max(0, Math.min(1, charP));
+
+                                if (span.dataset.o) {
+                                    if (charP > 0 && charP < 1) {
+                                        if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
+                                        span.style.opacity = 1 - charP;
+                                    } else if (charP >= 1) {
+                                        span.style.opacity = 0;
+                                    } else {
+                                        // Don't force opacity to 1 here, let the staggered "typing" animation control the initial 1 state
+                                        span.innerText = span.dataset.o;
+                                    }
+                                } else {
+                                    span.style.opacity = 1 - charP;
+                                }
+                            });
+                        }
+                    }, 2);
 
 
                 document.querySelectorAll('.split-line').forEach(el => {
@@ -994,29 +1028,56 @@
                         scrollTrigger: { trigger: processPin, start: "top 80%", toggleActions: "play none none reverse" }
                     });
 
-                    // Calculate slightly shorter scroll distance for tighter feeling
+                    // Sliding eye up to "peek" just as Process section enters viewport
+                    gsap.to("#ascii-wrapper", {
+                        yPercent: -50,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: processPin,
+                            start: "top bottom",
+                            end: "top top",
+                            scrub: true
+                        }
+                    });
+
+                    // HORIZONTAL SCROLL PIN (Defined before eye exit so it properly accounts for the added pin spacing)
                     let getScrollAmount = () => -(processSlider.scrollWidth - window.innerWidth + 100);
 
                     gsap.to(processSlider, {
                         x: getScrollAmount,
-                        ease: "power1.inOut", // Added subtle easing instead of harsh linear
+                        ease: "none", // Must be none for 1:1 scrubbed scrolling
                         scrollTrigger: {
                             trigger: processPin,
                             start: "top top",
                             end: () => `+=${processSlider.scrollWidth - window.innerWidth}`,
                             pin: true,
-                            scrub: true, // Switched from 1 (lag) to true (instant 1-to-1 reaction)
+                            scrub: true,
                             invalidateOnRefresh: true,
                             onUpdate: (self) => {
-                                // Dynamically update the Phase counter based on scroll progress
                                 let totalCards = processCards.length;
                                 let currentIdx = Math.floor(self.progress * totalCards);
-                                // Prevent currentIdx from exceeding the array bounds at progress=1
                                 let phase = Math.min(currentIdx, totalCards - 1) + 1;
                                 document.getElementById('process-counter').innerText = "0" + phase;
                             }
                         }
                     });
+
+                    // Eye perfectly static during horizontal scroll because it's fixed and we do nothing here...
+
+                    // Exit eye completely off-screen AFTER Process section unpins and user scrolls to footer
+                    // By pinning the exit trigger to #contact (the next section), GSAP automatically inherits the entire
+                    // horizontal pin spacing delay. It will not fire a single pixel until the horizontal scroll finishes.
+                    gsap.to("#ascii-wrapper", {
+                        yPercent: -150, // Move it way off screen
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: "#contact", // Next element in the DOM
+                            start: "top bottom", // Trigger exactly when horizontal scrolling ends and footer begins revealing
+                            end: "top top",      // End exactly when the footer reaches the top of the monitor
+                            scrub: true
+                        }
+                    });
+
                 }
 
 
@@ -1176,4 +1237,5 @@
         });
     </script>
 </body>
+
 </html>
