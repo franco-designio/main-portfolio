@@ -42,7 +42,6 @@
             color: var(--fg);
             font-family: 'Instrument Sans', sans-serif;
             letter-spacing: -0.01em;
-            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             cursor: none;
@@ -208,7 +207,7 @@
     </style>
 </head>
 
-<body class="w-full relative">
+<body class="w-full relative overflow-hidden">
 
     <div class="noise-overlay"></div>
     <div id="cursor-dot"></div>
@@ -286,6 +285,12 @@
             <h1 id="intro-text-2"
                 class="text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference relative pointer-events-none mb-4">
                 <span class="italic">Transformation</span> is Human.
+            </h1>
+
+            <!-- New Scroll Phrase (Hidden Initially) -->
+            <h1 id="intro-text-3"
+                class="absolute inset-0 flex items-center justify-center text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference pointer-events-none opacity-0">
+                Design is the <span class="italic">Language</span>.
             </h1>
 
             <!-- Bottom scroll cue to be revealed after sequence -->
@@ -552,15 +557,29 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
+        // ==========================================
+        // PREVENT SCROLL RESTORATION & INITIALIZE LENIS
+        // ==========================================
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        // Initialize Lenis for smooth scrolling
         const lenis = new Lenis({
-            duration: 0.8, // Faster, tighter smooth scrolling
+            duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             direction: 'vertical',
+            gestureDirection: 'vertical',
             smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
         });
 
-        lenis.start(); // Start smooth scrolling immediately
-
+        // Force lenis to stop intercepting/allowing scroll early
+        lenis.stop();
         lenis.on('scroll', ScrollTrigger.update);
         gsap.ticker.add((time) => { lenis.raf(time * 1000); });
         gsap.ticker.lagSmoothing(0);
@@ -783,6 +802,8 @@
 
             initAsciiEye();
 
+            // Initialize all scroll animations BEFORE the preloader fades out to prevent DOM reflow jumps
+            initScrollAnimations();
 
             // =======================================================
             // PRELOADER & INTRO SEQUENCE TIMELINE
@@ -808,9 +829,9 @@
                     const tl = gsap.timeline({
                         onComplete: () => {
                             document.getElementById('preloader').style.display = 'none';
-                            initScrollAnimations();
+                            document.body.classList.remove("overflow-hidden"); // Remove native scroll lock
                             ScrollTrigger.refresh();
-                            lenis.start();
+                            lenis.start(); // Unlock Lenis
                         }
                     });
 
@@ -832,6 +853,91 @@
             // SCROLL ANIMATIONS (Triggered after Intro Ends)
             // =======================================================
             function initScrollAnimations() {
+
+                // ==========================================
+                // HERO PINNED SCROLL SEQUENCE
+                // ==========================================
+                gsap.set("#intro-text-3", { opacity: 1, y: 0 }); // Reveal container
+
+                const splitNode = (selector, baseClass) => {
+                    const el = document.querySelector(selector);
+                    if (!el) return [];
+                    const processNode = (node) => {
+                        if (node.nodeType === 3) {
+                            const chars = node.nodeValue.split('');
+                            const frag = document.createDocumentFragment();
+                            chars.forEach(c => {
+                                const span = document.createElement('span');
+                                span.className = baseClass + ' inline-block whitespace-pre';
+                                span.innerText = c;
+                                if (c.trim() !== "") span.dataset.o = c;
+                                frag.appendChild(span);
+                            });
+                            node.parentNode.replaceChild(frag, node);
+                        } else if (node.nodeType === 1 && !node.classList.contains(baseClass)) {
+                            Array.from(node.childNodes).forEach(processNode);
+                        }
+                    };
+                    Array.from(el.childNodes).forEach(processNode);
+                    return gsap.utils.toArray(`${selector} .${baseClass}`);
+                };
+
+                const outChars = [...splitNode("#intro-text-1", "out-char"), ...splitNode("#intro-text-2", "out-char")];
+                const inChars = splitNode("#intro-text-3", "in-char");
+
+                gsap.set(inChars, { opacity: 0 });
+
+                let heroScrollTl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: "#hero-ascii",
+                        start: "top top",
+                        end: "+=150%",
+                        pin: true,
+                        scrub: true,
+                    }
+                });
+
+                const scrambleStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*&%!";
+                const outDummy = { p: 0 };
+
+                heroScrollTl.to(outDummy, {
+                    p: 1,
+                    duration: 1,
+                    ease: "none",
+                    onUpdate: () => {
+                        const progress = outDummy.p;
+                        // Animate ASCII out
+                        outChars.forEach((span, i) => {
+                            const charThreshold = (i / outChars.length) * 0.7;
+                            let charP = (progress - charThreshold) / 0.3;
+                            charP = Math.max(0, Math.min(1, charP));
+
+                            if (span.dataset.o) {
+                                if (charP > 0 && charP < 1) {
+                                    if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
+                                    span.style.opacity = 1 - charP;
+                                } else if (charP >= 1) {
+                                    span.style.opacity = 0;
+                                    span.innerText = span.dataset.o;
+                                } else {
+                                    span.style.opacity = 1;
+                                    span.innerText = span.dataset.o;
+                                }
+                            } else {
+                                span.style.opacity = 1 - charP;
+                            }
+                        });
+                    }
+                }, 0)
+                    // Animate Sharp Typing In
+                    .to(inChars, {
+                        opacity: 1,
+                        stagger: 0.02,
+                        duration: 0.01,
+                        ease: "none"
+                    }, 0.5)
+                    .to("#hero-footer-text", { opacity: 0, duration: 0.5 }, 0);
+
 
                 document.querySelectorAll('.split-line').forEach(el => {
                     const text = el.innerText;
@@ -1070,5 +1176,4 @@
         });
     </script>
 </body>
-
 </html>
