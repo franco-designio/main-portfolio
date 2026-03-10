@@ -4,36 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FRANCO DESIGNIO — Human-Centered UX & Creative Technology</title>
+    <title>FRANCO DESIGNIO — Human-Centered Design & Creative Technology</title>
 
-    <!-- Editorial Fonts: Instrument Serif & Instrument Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- GSAP Core & Plugins -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
-    <!-- Lenis Smooth Scroll -->
-    <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-
-    <!-- Matter.js (2D Physics Engine) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
-
-    <!-- Three.js (3D WebGL Engine for ASCII Eye) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 
     <style>
         :root {
             /* High-contrast Black & White */
             --bg: #0a0a0a;
             --fg: #f8f8f8;
+
+            /* Customize the individual ASCII shapes color */
+            --shape-eye: #ffffff;
+            --shape-torus: #e4e4e4;
+            --shape-pawn: #ffe600;
+            --shape-logo: #e4e4e4;
         }
 
         /* Core typographic and color enforcements - Editorial Reset */
@@ -122,33 +116,6 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Navigation specifics */
-        .nav-link {
-            position: relative;
-            display: inline-block;
-            text-decoration: none;
-            padding: 2px 0;
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 1px;
-            bottom: 0;
-            left: 0;
-            background-color: var(--fg);
-            transform: scaleX(0);
-            transform-origin: bottom right;
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-
         .rotated-cta {
             writing-mode: vertical-rl;
             text-orientation: mixed;
@@ -184,9 +151,50 @@
 
         html {
             scrollbar-width: none;
+            overflow-x: hidden;
+            max-width: 100vw;
+            overscroll-behavior-x: none;
         }
 
-        /* ASCII Tracking Core Styles - Kept Monospace to preserve alignment */
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            overscroll-behavior-x: none;
+        }
+
+        /* Rotating Title Animation Utilities */
+        .role-wrapper {
+            transition: all 800ms cubic-bezier(0.16, 1, 0.3, 1);
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
+            width: 100%;
+            height: max-content;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .role-hidden-bottom {
+            transform: translateY(120%);
+            opacity: 0;
+            filter: blur(4px);
+            pointer-events: none;
+        }
+
+        .role-hidden-top {
+            transform: translateY(-120%);
+            opacity: 0;
+            filter: blur(4px);
+            pointer-events: none;
+        }
+
+        .role-visible {
+            transform: translateY(0);
+            opacity: 1;
+            filter: blur(0);
+            pointer-events: auto;
+        }
+
+        /* ASCII Tracking Core Styles */
         #ascii-container {
             white-space: pre;
             transform-origin: center;
@@ -194,15 +202,6 @@
             font-weight: bold;
             letter-spacing: 0;
             text-align: left;
-        }
-
-        .scanlines {
-            background: linear-gradient(to bottom,
-                    rgba(255, 255, 255, 0),
-                    rgba(255, 255, 255, 0) 50%,
-                    rgba(0, 0, 0, 0.2) 50%,
-                    rgba(0, 0, 0, 0.2));
-            background-size: 100% 4px;
         }
 
         /* Mobile Touch Optimizations */
@@ -215,244 +214,283 @@
                 display: none !important;
             }
         }
+
+        /* Hero Styling */
+        .scanlines {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.25) 50%, rgba(0, 0, 0, 0.25));
+            background-size: 100% 4px;
+        }
+
+        .vignette {
+            background: radial-gradient(circle at center, transparent 30%, #0a0a0a 110%);
+        }
+
+        /* Nuevas clases para el texto puro del Hero */
+        .hero-text-pure {
+            font-size: clamp(1.2rem, 2.5vw, 2.8rem);
+            font-weight: 400;
+            color: #a3a3a3;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .hero-text-pure span {
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        .interactive-phrase {
+            cursor: pointer;
+        }
+
+        /* Estado hover base */
+        .interactive-phrase:hover span {
+            color: #ffffff !important;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes floatPhrase {
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) translateX(3px) rotate(0.5deg);
+            }
+        }
+
+        .float-anim-1 {
+            animation: floatPhrase 4s ease-in-out infinite;
+        }
+
+        .float-anim-2 {
+            animation: floatPhrase 5s ease-in-out infinite reverse;
+        }
+
+        .float-anim-3 {
+            animation: floatPhrase 6s ease-in-out infinite 1s;
+        }
+
+        /* Utilidad para evitar saltos de layout por monospace glitcheando vs serif */
+        .glitch-full, .glitch-partial {
+            font-family: 'Instrument Serif', serif;
+            min-width: max-content;
+        }
     </style>
 </head>
 
-<body class="w-full relative overflow-hidden">
+<body class="w-full relative overflow-x-hidden max-w-[100vw]">
 
     <div class="noise-overlay"></div>
     <div id="cursor-dot"></div>
 
-    <!-- ==========================================
-         SECTION 01: PRELOADER 
-         ========================================== -->
-    <div id="preloader"
-        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--bg)] pointer-events-none">
-        <div class="text-[clamp(4rem,25vw,30vw)] leading-[0.8] w-full text-center overflow-hidden font-serif"
-            id="preload-row-1">XYZ89</div>
-        <div class="text-[clamp(4rem,25vw,30vw)] leading-[0.8] w-full text-center overflow-hidden font-serif"
-            id="preload-row-2">01ABC</div>
-        <div id="preloader-wipe" class="absolute top-full left-0 w-full h-full bg-[var(--fg)]"></div>
+    <div id="preloader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--bg)] pointer-events-none">
+        <div class="text-[clamp(4rem,25vw,30vw)] leading-[0.8] w-full text-center overflow-hidden font-serif" id="preload-row-1">XYZ89</div>
+        <div class="text-[clamp(4rem,25vw,30vw)] leading-[0.8] w-full text-center overflow-hidden font-serif" id="preload-row-2">01ABC</div>
     </div>
 
-    <!-- ==========================================
-         NAVIGATION (PERSISTENT ZONES)
-         ========================================== -->
-    <nav class="fixed top-6 left-6 z-40 flex flex-col gap-1 text-meta mix-blend-difference">
-        <a href="#about" class="nav-link w-max hover-target magnetic" data-strength="15">ABOUT</a>
-        <a href="#work" class="nav-link w-max hover-target magnetic" data-strength="15">WORK</a>
-        <a href="#process-pin-container" class="nav-link w-max hover-target magnetic" data-strength="15">PROCESS</a>
-        <a href="#principles" class="nav-link w-max hover-target magnetic" data-strength="15">PRINCIPLES</a>
-        <a href="#contact" class="nav-link w-max hover-target magnetic" data-strength="15">CONTACT</a>
-    </nav>
-
-    <div
-        class="fixed top-6 left-1/2 -translate-x-1/2 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap hover-target mix-blend-difference">
-        FRANC<span class="inline-block transform rotate-180">O</span> DESIGNIO
+    <div class="fixed top-8 left-6 md:left-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap hover-target mix-blend-difference font-sans text-white">
+        /FRANCODESIGNIO
+    </div>
+    <div class="fixed top-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap hover-target mix-blend-difference font-sans text-white">
+        OPEN TO REMOTE
     </div>
 
-    <!--FLOATING CONTACT PERSISTENT BUTTON-->
-    <a href="#contact" id="floating-contact-btn"
-        class="fixed bottom-12 right-6 z-40 flex items-center gap-4 group cursor-none text-meta hover-target magnetic mix-blend-difference"
-        data-strength="30">
-        <div class="rotated-cta tracking-widest">LET'S WORK</div>
-        <div
-            class="w-10 h-10 rounded-full border border-white flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:bg-white group-hover:text-black">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="5" x2="5" y2="19"></line>
-                <polyline points="19 19 5 19 5 5"></polyline>
-            </svg>
-        </div>
-    </a>
-
-    <!-- ==========================================
-         MAIN CONTENT WRAPPER
-         ========================================== -->
     <main id="main-content">
 
-        <!-- ASCII Canvas Target (Fixed Overlay behind content) -->
-        <div class="fixed inset-0 flex items-center justify-center z-[15] overflow-hidden pointer-events-none"
-            id="ascii-wrapper">
-            <pre id="ascii-container" class="pointer-events-none will-change-transform m-0 p-0 block text-left"
-                style="color: var(--fg); opacity: 0;"></pre>
-        </div> <!-- ==========================================
-             SECTION 02: HERO (NEW SEQUENCE & ASCII EYE)
-             ========================================== -->
-        <section id="hero-ascii"
-            class="w-full h-[100svh] relative z-10 bg-transparent overflow-hidden flex flex-col items-center justify-center gap-16 md:justify-between pt-32 pb-24 md:pt-32 md:pb-32">
+        <div class="fixed inset-0 z-0 pointer-events-none" id="ascii-wrapper">
+            <canvas id="ascii-canvas" class="w-full h-full block"></canvas>
+            <div class="scanlines absolute inset-0 z-[1]"></div>
+            <div class="vignette absolute inset-0 z-[2]"></div>
+        </div>
 
-            <!-- Top Phrase -->
-            <h1 id="intro-text-1"
-                class="text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference relative pointer-events-none">
-                Creation is <span class="italic">Divine</span>
-            </h1>
+        <div class="relative z-[10] w-full" id="hero-foreground">
+            <section class="relative h-screen w-full flex flex-col justify-center pointer-events-none">
+                
+                <div class="absolute inset-0 pointer-events-none hidden md:block z-[15]">
+                    
+                    <div class="hero-text-pure font-sans flex flex-col items-end interactive-phrase float-anim-1 absolute hover-target top-[35%] left-[18%]" data-shape="pawn">
+                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="TRANSFORMATION">TRANSFORMATION</span> 
+                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS HUMAN">IS HUMAN</span>
+                    </div>
+                    
+                    <div class="hero-text-pure font-sans flex flex-col items-start interactive-phrase float-anim-2 absolute hover-target top-[50%] right-[15%]" data-shape="logo">
+                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mb-1 tracking-widest" data-original="DESIGN IS">DESIGN IS</span> 
+                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="THE LANGUAGE">THE LANGUAGE</span>
+                    </div>
+                    
+                    <div class="hero-text-pure font-sans flex flex-col items-center interactive-phrase float-anim-3 absolute hover-target bottom-[12%] left-[43%]" data-shape="torus">
+                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="CREATION">CREATION</span> 
+                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS DIVINE">IS DIVINE</span>
+                    </div>
+                </div>
 
+                <div class="absolute bottom-8 left-6 md:left-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
+                    SCROLL TO EXPLORE
+                </div>
+                <div class="absolute bottom-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
+                    SCROLL TO EXPLORE
+                </div>
+                
+            </section>
 
-
-            <div class="scanlines absolute inset-0 pointer-events-none z-20"></div>
-
-            <!-- Bottom Phrase -->
-            <h1 id="intro-text-2"
-                class="text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference relative pointer-events-none mb-4">
-                <span class="italic">Transformation</span> is Human
-            </h1>
-
-            <!-- New Scroll Phrase (Hidden Initially) -->
-            <h1 id="intro-text-3"
-                class="absolute inset-0 flex items-center justify-center text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference pointer-events-none opacity-0">
-                Design is the <span class="italic">Language</span>.
-            </h1>
-
-            <!-- Bottom scroll cue to be revealed after sequence -->
-            <div id="hero-footer-text"
-                class="flex flex-col md:flex-row justify-center md:justify-between w-full text-meta items-center md:items-end absolute bottom-6 md:bottom-8 left-0 px-6 z-30 opacity-0 pointer-events-none gap-2 md:gap-0">
-                <div class="hidden md:block w-1/3 text-left">DESIGN IN PRACTICE</div>
-                <div class="w-full md:w-1/3 text-center animate-pulse tracking-widest text-[0.6rem] md:text-meta">SCROLL
-                    TO VIEW MORE ↓</div>
-                <div class="hidden md:block w-1/3 text-right">©2026</div>
-            </div>
-
-        </section>
-
-        <!-- ==========================================
-             SECTION 03: ABOUT
-             ========================================== -->
-        <section id="about" class="w-full min-h-screen pt-32 pb-48 px-6 lg:px-12 relative z-20 bg-transparent">
-            <!-- <div class="flex justify-between w-full text-meta mb-24">
-                <div class="split-line">ZAPOPAN / GUADALAJARA, MX</div>
-                <div class="split-line">AVAILABLE</div>
-            </div> -->
-
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-48">
-                <div class="md:col-span-7">
-                    <h2 class="text-display max-w-4xl tracking-tight">
-                        <span class="block split-line">I don't just design</span>
-                        <span class="block split-line"><span class="italic">interfaces</span> — I design</span>
-                        <span class="block split-line">how people think</span>
-                        <span class="block split-line">through them.</span>
+            <section class="relative min-h-screen w-full flex flex-col md:flex-row items-center justify-between px-6 md:px-24 py-24 md:py-0 pointer-events-none gap-16 md:gap-0">
+                <div class="w-full md:w-1/2 pointer-events-auto">
+                    <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[1.1] drop-shadow-2xl">
+                        <span class="block text-sm md:text-base font-sans font-normal text-[#a3a3a3] mb-2 tracking-wide uppercase">
+                            I'm Franco
+                        </span>
+                        <span class="block text-[var(--fg)] text-[1.15em] mb-0 max-md:mb-1 italic" style="font-family: 'Instrument Serif', serif;">Designer &
+                        </span>
+                        
+                        <span class="grid overflow-visible py-1 md:py-2 relative h-[1.6em] md:h-[1.4em] min-w-full" id="role-container">
+                        </span>
+                        
                     </h2>
                 </div>
-                <div class="md:col-span-5 flex flex-col justify-end text-body pb-4">
-                    <div class="flex flex-col gap-1 w-full max-w-lg ml-auto cascade-text text-[var(--fg)]/80">
-                        <span style="margin-left: 0%;">I work at the intersection of</span>
-                        <span style="margin-left: 8%;">human behavior and digital form.</span>
-                        <span style="margin-left: 16%;">Every decision begins with how a real person</span>
-                        <span style="margin-left: 24%;">perceives, decides, and moves —</span>
-                        <span style="margin-left: 12%;">not with how a screen looks.</span>
-                        <br>
-                        <span style="margin-left: 4%;">Where cognitive load meets visual hierarchy.</span>
-                        <span style="margin-left: 18%;">Where friction becomes flow.</span>
-                        <span style="margin-left: 0%;">Where design stops being decoration</span>
-                        <span style="margin-left: 12%;">and starts being clarity.</span>
+
+                <div id="expertise-wheel" class="w-full md:w-1/2 min-h-[400px] md:min-h-[500px] pointer-events-auto mt-12 md:mt-0 relative overflow-visible">
+                    <div id="wheel-axle" class="absolute top-1/2 -translate-y-1/2 right-[-10%] md:right-[-5%] flex flex-col items-end z-10 opacity-0">
+                        <div class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono flex items-center gap-3">
+                            <span class="w-1.5 h-1.5 bg-[#a3a3a3] rounded-full inline-block opacity-70"></span>
+                            Expertise
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Typographic Sculpture -->
-            <div class="w-full flex flex-col gap-8 text-huge tracking-tight mt-32 sculpture-container">
-                <div class="flex flex-wrap gap-x-6 md:gap-x-12 gap-y-0 overflow-hidden">
-                    <span class="sculpture-word block origin-bottom-left">Designed</span>
-                    <span class="sculpture-word block origin-bottom-left">for</span>
-                    <span class="sculpture-word block origin-bottom-left italic font-serif">humans</span>
-                    <span class="sculpture-word block origin-bottom-left">who</span>
-                    <span class="sculpture-word block origin-bottom-left italic font-serif">feel.</span>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        HARDWARE UX/UI</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        INTERACTIVE MEDIA</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        MVP DESIGN</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        PRODUCT DESIGN</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        CREATIVE DIRECTION</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        WEBSITE DESIGN</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        CREATIVE INNOVATION</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        HUMAN FACTORS</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        BRAND NARRATIVE</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        CREATIVE CODING</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        MOTION DESIGN</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        BRAND IDENTITY</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        USER RESEARCH</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        DATA VISUALIZATION</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        INSTRUCTIONAL DESIGN</div>   
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        PRODUCT STRATEGY</div>
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                        HARDWARE UX/UI</div>
                 </div>
-                <div class="flex flex-wrap gap-x-6 md:gap-x-12 gap-y-0 overflow-hidden justify-end mt-12 md:mt-24">
-                    <span class="sculpture-word block origin-bottom-left italic font-serif">Not</span>
-                    <span class="sculpture-word block origin-bottom-left">just</span>
-                    <span class="sculpture-word block origin-bottom-left">users.</span>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
-        <!-- ==========================================
-             SECTION 04: PROCESS (HORIZONTAL SCROLL)
-             ========================================== -->
-        <section id="process-pin-container"
-            class="w-full h-screen relative z-20 bg-transparent border-t border-[var(--fg)]/20 overflow-hidden flex flex-col justify-center">
+        <section id="process-pin-container" class="w-full max-w-[100vw] h-screen relative z-20 bg-transparent overflow-hidden flex flex-col justify-center">
 
-            <!-- Fixed Header overlay during pin -->
-            <div
-                class="absolute top-12 left-6 lg:left-12 right-6 lg:right-12 flex justify-between items-start z-10 pointer-events-none">
-                <h2 class="text-display w-full md:w-1/2 line-mask">
-                    <span class="line-mask-inner process-header-reveal">How it works —<br><span
-                            class="italic font-serif">together</span></span>
+            <div class="w-full px-6 lg:px-12 z-10 pointer-events-none mb-6">
+                <h2 class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono line-mask">
+                    <span class="line-mask-inner process-header-reveal flex items-center gap-3">
+                        <span class="w-1.5 h-1.5 bg-[#a3a3a3] rounded-full inline-block opacity-70"></span>
+                        What I do
+                    </span>
                 </h2>
-                <div
-                    class="text-meta hidden md:block border border-[var(--fg)]/30 rounded-full px-4 py-1 pointer-events-auto hover-target bg-[var(--bg)]">
-                    PHASE <span id="process-counter">01</span>-03
-                </div>
             </div>
 
-            <!-- The horizontally sliding track -->
-            <div class="process-slider flex gap-6 px-6 lg:px-12 w-[max-content] items-center mt-24">
+            <div class="process-slider flex gap-6 px-6 lg:px-12 w-[max-content] items-center">
 
-                <!-- Card 01 -->
-                <div
-                    class="process-block-card w-[85vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 p-8 lg:p-12 flex flex-col justify-between bg-[var(--bg)] hover-target">
-                    <div>
-                        <span class="p-num text-body">(01)</span>
-                        <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4">UX Research<br>& <span
-                                class="italic font-serif">Strategy</span></h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                        <ul class="flex flex-col gap-2 text-meta text-[var(--fg)]/60">
-                            <li>→ HEURISTIC EVALUATION</li>
-                            <li>→ USER FLOWS & MAPPING</li>
-                            <li>→ COGNITIVE LOAD ANALYSIS</li>
-                            <li>→ MENTAL MODEL RESEARCH</li>
-                            <li>→ USABILITY TESTING</li>
-                        </ul>
-                        <div class="text-body leading-relaxed pt-2 hidden md:block p-desc text-[var(--fg)]/80">
-                            Clarity is a radical act. I dive into how people actually think — not how we assume they do.
-                            From behavior to structure, I build the foundation for interfaces that feel inevitable.
+                <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="metadata">
+                        <source src="https://videos.pexels.com/video-files/35968183/15249566_1920_1080_30fps.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
+                    <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
+                        <div>
+                            <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(01)</span>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">UX / UI<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Design.</span></h3>
+                        </div>
+                        <div class="mt-8">
+                            <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
+                                UX/UI for websites and product interfaces
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 02 -->
-                <div
-                    class="process-block-card w-[85vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 p-8 lg:p-12 flex flex-col justify-between bg-[var(--bg)] hover-target">
-                    <div>
-                        <span class="p-num text-body">(02)</span>
-                        <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4">Interface<br><span
-                                class="italic font-serif">Design</span></h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                        <ul class="flex flex-col gap-2 text-meta text-[var(--fg)]/60">
-                            <li>→ INTERACTION PATTERNS</li>
-                            <li>→ COMPONENT SYSTEMS</li>
-                            <li>→ VISUAL HIERARCHY</li>
-                            <li>→ MOTION PRINCIPLES</li>
-                            <li>→ ACCESSIBILITY-FIRST</li>
-                        </ul>
-                        <div class="text-body leading-relaxed pt-2 hidden md:block p-desc text-[var(--fg)]/80">
-                            In a world of noise, your interface should speak with precision. I craft visual systems that
-                            are intentional and built to carry meaning — not just style.
+                <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="metadata">
+                        <source src="https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4" type="video/mp4">
+                    </video>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
+                    <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
+                        <div>
+                            <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(02)</span>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">Narrative &<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Interaction.</span></h3>
+                        </div>
+                        <div class="mt-8">
+                            <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
+                                Narrative, scroll‑based, and interaction‑driven experiences
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 03 -->
-                <div
-                    class="process-block-card w-[85vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 p-8 lg:p-12 flex flex-col justify-between bg-[var(--bg)] hover-target">
-                    <div>
-                        <span class="p-num text-body">(03)</span>
-                        <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4">Creative Tech<br>& <span
-                                class="italic font-serif">Implementation</span></h3>
+                <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="metadata">
+                        <source src="https://videos.pexels.com/video-files/25744127/11904066_2560_1440_15fps.mp4" type="video/mp4">
+                    </video>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
+                    <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
+                        <div>
+                            <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(03)</span>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">Front-End<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Motion.</span></h3>
+                        </div>
+                        <div class="mt-8">
+                            <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
+                                Front‑end implementation (GSAP, WebGL, creative JS)
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                        <ul class="flex flex-col gap-2 text-meta text-[var(--fg)]/60">
-                            <li>→ HTML / CSS / JS</li>
-                            <li>→ GSAP MICROINTERACTIONS</li>
-                            <li>→ PERFORMANCE-FIRST</li>
-                            <li>→ WEBGL & CANVAS</li>
-                            <li>→ NUXT / VUE / REACT</li>
-                        </ul>
-                        <div class="text-body leading-relaxed pt-2 hidden md:block p-desc text-[var(--fg)]/80">
-                            The build is part of the design. I don't hand off and disappear — I stay in the code until
-                            the interaction feels exactly the way it was designed to.
+                </div>
+
+                <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="metadata">
+                        <source src="https://www.pexels.com/download/video/25744121/" type="video/mp4">
+                    </video>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
+                    <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
+                        <div>
+                            <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(04)</span>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">Workspace<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Design.</span></h3>
+                        </div>
+                        <div class="mt-8">
+                            <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
+                                Workflow analysis, Notion workspace design, and cognitive load reduction
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -460,64 +498,48 @@
             </div>
         </section>
 
-
-        <!-- ==========================================
-             SECTION 05: WORK
-             ========================================== -->
-        <section id="work" class="w-full py-32 relative z-20 bg-[var(--bg)] border-t border-[var(--fg)]/20">
-            <div class="px-6 lg:px-12 w-full mx-auto mb-20 flex justify-between items-end">
-                <h2 class="text-display split-line">Selected <span class="italic font-serif">Work</span> <span
-                        class="text-[var(--fg)]/40 text-body font-sans italic ml-4">(5)</span></h2>
+        <section id="work" class="w-full pt-20 relative z-20 bg-transparent">
+            <div class="w-full px-6 lg:px-12 z-10 pointer-events-none mb-6">
+                <h2 class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono split-line line-mask">
+                    <span class="line-mask-inner flex items-center gap-3">
+                        <span class="w-1.5 h-1.5 bg-[#a3a3a3] rounded-full inline-block opacity-70"></span>
+                        Selected Work <span class="text-[var(--fg)]/40 font-sans italic ml-1">(5)</span>
+                    </span>
+                </h2>
             </div>
 
             <div class="relative border-t border-[var(--fg)]/20 work-list-container">
-                <!-- Project Items -->
-                <a href="#"
-                    class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item"
-                    data-img="https://images.unsplash.com/photo-1579566346927-c68383817a25?q=80&w=1000&auto=format&fit=crop">
-                    <div
-                        class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                <a href="#" class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item" data-img="https://images.unsplash.com/photo-1579566346927-c68383817a25?q=80&w=1000&auto=format&fit=crop">
+                    <div class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
                     </div>
                     <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
-                        <h3
-                            class="font-serif text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out group-hover:italic">
-                            Organ-on-Chip Medical Device</h3>
-                        <div
-                            class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                        <h3 class="font-sans font-semibold text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                            Organ-on-Chip Medical <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Device.</span></h3>
+                        <div class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
                             <span class="text-meta">HARDWARE UX</span>
                             <span class="text-meta">2025</span>
                         </div>
                     </div>
                 </a>
-                <a href="#"
-                    class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item"
-                    data-img="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop">
-                    <div
-                        class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                <a href="#" class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item" data-img="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop">
+                    <div class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
                     </div>
                     <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
-                        <h3
-                            class="font-serif text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out group-hover:italic">
-                            Internal Creative AI Tools</h3>
-                        <div
-                            class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                        <h3 class="font-sans font-semibold text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                            Internal Creative AI <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Tools.</span></h3>
+                        <div class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
                             <span class="text-meta">VISUAL IDEATION</span>
                             <span class="text-meta">2024</span>
                         </div>
                     </div>
                 </a>
-                <a href="#"
-                    class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item"
-                    data-img="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop">
-                    <div
-                        class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                <a href="#" class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item" data-img="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop">
+                    <div class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
                     </div>
                     <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
-                        <h3
-                            class="font-serif text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out group-hover:italic">
-                            Regulated Digital Products</h3>
-                        <div
-                            class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                        <h3 class="font-sans font-semibold text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                            Regulated Digital <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Products.</span></h3>
+                        <div class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
                             <span class="text-meta">COMPLIANCE SYSTEMS</span>
                             <span class="text-meta">2024</span>
                         </div>
@@ -525,48 +547,93 @@
                 </a>
             </div>
         </section>
+        <section id="other-projects" class="w-full relative z-20 bg-transparent text-[var(--fg)] pb-16">
+            <div class="w-full px-6 lg:px-12 pt-8 pb-4 border-t-0 flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-[#a3a3a3] rounded-full inline-block opacity-70"></span>
+                <span class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono">Other Projects</span>
+            </div>
+            <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                <a href="#" class="block p-6 lg:p-12 border border-[var(--fg)]/30 hover:bg-white/5 transition-all duration-500 group hover-target cursor-none relative flex flex-col justify-start">
+                    <svg class="w-8 h-8 text-[#a3a3a3] mb-8 group-hover:text-[var(--fg)] group-hover:-translate-y-1 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5">
+                        </path>
+                    </svg>
+                    <h3 class="text-3xl font-sans font-semibold mb-3 group-hover:translate-x-1 transition-transform duration-500">
+                        VR Haptic <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Glove.</span></h3>
+                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Hardware interaction models for physical
+                        feedback in virtual environments.</p>
+                </a>
+                <a href="#" class="block p-6 lg:p-12 border border-[var(--fg)]/30 hover:bg-white/5 transition-all duration-500 group hover-target cursor-none relative flex flex-col justify-start">
+                    <svg class="w-8 h-8 text-[#a3a3a3] mb-8 group-hover:text-[var(--fg)] group-hover:-translate-y-1 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <h3 class="text-3xl font-sans font-semibold mb-3 group-hover:translate-x-1 transition-transform duration-500">
+                        Digital <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Platforms.</span></h3>
+                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Scalable design systems architecture for
+                        complex enterprise web applications.</p>
+                </a>
+                <a href="#" class="block p-6 lg:p-12 border border-[var(--fg)]/30 hover:bg-white/5 transition-all duration-500 group hover-target cursor-none relative flex flex-col justify-start">
+                    <svg class="w-8 h-8 text-[#a3a3a3] mb-8 group-hover:text-[var(--fg)] group-hover:-translate-y-1 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <h3 class="text-3xl font-sans font-semibold mb-3 group-hover:translate-x-1 transition-transform duration-500">
+                        Creative <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">AI.</span></h3>
+                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Designing with and around AI — tools,
+                        workflows, and creative systems that actually get used.</p>
+                </a>
+            </div>
+        </section>
 
-        <!-- ==========================================
-             FOOTER
-             ========================================== -->
-        <footer id="contact"
-            class="w-full min-h-[90vh] flex flex-col items-center justify-center bg-[var(--fg)] text-[var(--bg)] relative overflow-hidden z-20 pt-24 pb-12">
+        <footer id="contact" class="w-full min-h-screen flex flex-col items-center justify-between bg-transparent text-[var(--fg)] relative overflow-hidden z-20 pt-24 pb-6">
 
-            <!-- Matter.js Physics Container -->
-            <div id="physics-container" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></div>
+            <div id="physics-container" class="absolute inset-0 w-full h-full pointer-events-auto z-0 touch-none"></div>
 
-            <!-- Original layout container to measure the perfect starting positions -->
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none px-6 z-10 transition-opacity duration-300"
-                id="measurement-container">
-                <h2 id="footer-massive-text"
-                    class="text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center w-full select-none text-[var(--bg)]">
-                    <!-- Javascript will populate this to measure exactly -->
+            <div class="absolute inset-0 flex items-center justify-center pt-20 lg:pt-12 pointer-events-none px-6 z-10 transition-opacity duration-300" id="measurement-container">
+                <h2 id="footer-massive-text" class="text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center w-full select-none text-[var(--fg)]">
                 </h2>
             </div>
+            
+            <div class="absolute top-[10%] max-md:top-[12%] flex flex-col items-center justify-center z-30 pointer-events-none w-full gap-4">
+                <button id="cta-start-project" aria-label="Start Project"
+                    class="opacity-0 pointer-events-none bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(24px,2.5vw,32px)] py-[clamp(16px,1.5vw,20px)] min-h-[44px] min-w-[44px] border border-white/10 rounded font-sans font-semibold uppercase tracking-widest text-sm text-[#a3a3a3] hover:scale-105 hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-all duration-300 shadow-lg">
+                    Start Project
+                </button>
+                <p id="stay-and-play-msg" class="opacity-0 font-serif italic text-[#a3a3a3] text-lg transition-opacity duration-500 pointer-events-none">
+                    You Can Stay and Play With the Letters.
+                </p>
+            </div>
 
-            <div
-                class="relative z-10 flex flex-col md:flex-row justify-between w-full px-6 lg:px-12 mt-auto text-meta pointer-events-none">
-                <div class="flex flex-col gap-2 pointer-events-auto text-[var(--bg)]/70">
-                    <a href="mailto:designiofranco@gmail.com"
-                        class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">DESIGN@FRANCODESIGNIO.COM</a>
-                    <span>+52 33 0000 0000</span>
+            <div class="flex-grow"></div>
+
+            <div id="footer-meta-bar" class="relative z-30 flex flex-col md:flex-row items-center justify-between w-full px-6 lg:px-12 mt-auto text-meta pointer-events-none border-t border-[var(--fg)]/10 pt-6">
+                
+                <div class="flex gap-8 pointer-events-auto text-[var(--fg)]/70 w-full md:w-1/3 justify-start">
+                    <a href="#process-pin-container" class="hover:text-[var(--fg)] hover-target transition-colors p-2 -m-2 inline-block">SERVICES</a>
+                    <div class="relative group">
+                        <a href="#role-container" class="hover:text-[var(--fg)] hover-target transition-colors p-2 -m-2 inline-block">SUBSCRIBE</a>
+                        <div class="absolute bottom-full left-0 mb-4 w-64 p-5 bg-[var(--bg)] border border-[var(--fg)]/20 shadow-2xl rounded opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                            <p class="text-sm normal-case tracking-normal font-sans text-[var(--fg)]/90 leading-relaxed">Subscribe for updates on my latest work and creative insights</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex gap-8 mt-8 md:mt-0 pointer-events-auto text-[var(--bg)]/70">
-                    <a href="#"
-                        class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">LINKEDIN</a>
-                    <a href="#" class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">GITHUB</a>
-                    <a href="#" class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">READ
-                        CV</a>
+
+                <div class="pointer-events-auto flex items-center justify-center w-full md:w-1/3 my-4 md:my-0">
+                    <img src="img/logo-svg.svg" alt="Franco Designio Logo" class="h-4 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity">
+                </div>
+
+                <div class="pointer-events-auto text-[var(--fg)]/70 w-full md:w-1/3 flex justify-end text-right">
+                    <span class="font-serif text-sm tracking-wide normal-case text-[#a3a3a3]">
+                        2026 Made with Rube Goldberg Machines & <i class="italic text-[var(--fg)]">Magic</i>
+                    </span>
                 </div>
             </div>
         </footer>
 
     </main>
 
-    <!-- ==========================================
-         SCRIPTS / ANIMATION LOGIC
-         ========================================== -->
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
         gsap.registerPlugin(ScrollTrigger);
 
         // ==========================================
@@ -596,22 +663,16 @@
         gsap.ticker.add((time) => { lenis.raf(time * 1000); });
         gsap.ticker.lagSmoothing(0);
 
-        // Force scroll to top instantly before layout calculates and animations trigger
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
         window.scrollTo(0, 0);
-
-        document.addEventListener("DOMContentLoaded", () => {
-            // Backup scroll enforcing after DOM paint
-            window.scrollTo(0, 0);
 
             // =======================================================
             // TOUCH DETECTION & CUSTOM CURSOR LOGIC
             // =======================================================
             const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
 
-            // Mouse variables needed for both custom cursor and ASCII Eye
             let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
 
             window.addEventListener("mousemove", (e) => {
@@ -647,195 +708,555 @@
                     btn.addEventListener('mouseleave', () => gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.3)" }));
                 });
             } else {
-                // Ensure the exact DOM element is hidden logically just in case CSS doesn't fire
                 document.getElementById("cursor-dot").style.display = "none";
             }
 
-            // =======================================================
-            // THREE.JS ASCII EYE FEATURE
-            // =======================================================
-            function initAsciiEye() {
-                const ASCII_CHARS = "  .-:=+*%#@";
-                const bayerMatrix = [
-                    [0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]
-                ];
-                const asciiContainer = document.getElementById('ascii-container');
+            // ==========================================
+            // HERO TEXT GLITCH ENGINE (Fading Decode)
+            // ==========================================
+            function initHeroGlitch() {
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                const phrases = document.querySelectorAll('.hero-text-pure');
+                let isHeroVisible = true;
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        isHeroVisible = entry.isIntersecting;
+                    });
+                }, { threshold: 0 });
+                const heroSection = document.getElementById('hero-foreground');
+                if (heroSection) {
+                    observer.observe(heroSection);
+                }
 
-                let pixelBuffer;
-                let columns, rows;
-                let blinkTimer = 0;
-                let renderTarget;
+                phrases.forEach(phrase => {
+                    const spans = phrase.querySelectorAll('.glitch-full, .glitch-partial');
+                    const allCharSpans = [];
+
+                    // Wrap each character in a span for individual fading
+                    spans.forEach(span => {
+                        const original = span.getAttribute('data-original');
+                        span.innerHTML = ''; 
+                        
+                        for (let i = 0; i < original.length; i++) {
+                            const charSpan = document.createElement('span');
+                            charSpan.style.transition = 'opacity 0.3s ease-in-out';
+                            charSpan.style.display = 'inline-block';
+                            charSpan.style.willChange = 'opacity';
+                            
+                            if (original[i] === ' ') {
+                                charSpan.innerHTML = '&nbsp;';
+                                charSpan.dataset.isSpace = 'true';
+                            } else {
+                                charSpan.innerText = original[i];
+                                charSpan.dataset.orig = original[i];
+                                charSpan.dataset.isSpace = 'false';
+                                allCharSpans.push(charSpan);
+                            }
+                            span.appendChild(charSpan);
+                        }
+                    });
+
+                    let isHovered = false;
+                    let idleInterval;
+                    let timeOffset = Math.random() * 100; // Desync the breathing across phrases
+
+                    const tick = () => {
+                        if (isHovered || !isHeroVisible) return;
+                        timeOffset += 0.2; // Speed of the corruption wave
+
+                        // Sine wave to create a "breathing" corruption effect (from mostly legible to mostly scrambled)
+                        const corruptionWave = (Math.sin(timeOffset) + 1) / 2; 
+                        const targetRandomness = 0.1 + (corruptionWave * 0.7); // 10% to 80% chance of being a random char
+
+                        // Pick ~25% of the characters to fade and change at this exact moment
+                        const numToChange = Math.max(1, Math.floor(allCharSpans.length * 0.25));
+                        
+                        for (let i = 0; i < numToChange; i++) {
+                            const charSpan = allCharSpans[Math.floor(Math.random() * allCharSpans.length)];
+                            
+                            charSpan.style.opacity = '0'; // Fade out
+                            
+                            setTimeout(() => {
+                                if (isHovered) return; // Stop if user hovered mid-fade
+                                
+                                if (Math.random() < targetRandomness) {
+                                    charSpan.innerText = chars[Math.floor(Math.random() * chars.length)];
+                                } else {
+                                    charSpan.innerText = charSpan.dataset.orig;
+                                }
+                                
+                                charSpan.style.opacity = '1'; // Fade back in
+                            }, 300); // 300ms matches the CSS transition time
+                        }
+                    };
+
+                    const beginResolve = () => {
+                        isHovered = true;
+                        clearInterval(idleInterval);
+                        
+                        // Cascade fade back to original text gracefully on hover
+                        let delay = 0;
+                        allCharSpans.forEach((charSpan) => {
+                            if (charSpan.innerText !== charSpan.dataset.orig) {
+                                setTimeout(() => {
+                                    charSpan.style.opacity = '0';
+                                    setTimeout(() => {
+                                        charSpan.innerText = charSpan.dataset.orig;
+                                        charSpan.style.opacity = '1';
+                                    }, 200);
+                                }, delay);
+                                delay += 15; // Stagger effect from left to right
+                            } else {
+                                charSpan.style.opacity = '1';
+                            }
+                        });
+                    };
+
+                    const resetGlitch = () => {
+                        isHovered = false;
+                        clearInterval(idleInterval);
+                        // Interval pace: controls how frequently a new batch of characters starts fading
+                        idleInterval = setInterval(tick, 600);
+                    };
+
+                    phrase.addEventListener('mouseenter', beginResolve);
+                    phrase.addEventListener('mouseleave', resetGlitch);
+
+                    resetGlitch();
+                });
+            }
+
+
+            // ==========================================
+            // HYPER-OPTIMIZED THREE.JS & ASCII ENGINE
+            // ==========================================
+            function initOptimizedAscii() {
+                const canvas = document.getElementById('ascii-canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true, alpha: false });
+
+                let animationFrameId;
+                let width = window.innerWidth;
+                let height = window.innerHeight;
+                
+                // PERFORMANCE: Increase char size on mobile to render drastically fewer elements
+                const isMobile = width < 768;
+                let charWidth = isMobile ? 12 : 9;
+                let charHeight = isMobile ? 20 : 15;
+                let columns = Math.ceil(width / charWidth);
+                let rows = Math.ceil(height / charHeight);
+
+                let pixelBuffer = new Uint8Array(columns * rows * 4);
+                let hashGrid, colX, rowY;
+                let noise1_sin_x, noise1_cos_x, noise2_sin_y, noise2_cos_y;
+                let noise3_sin_xy, noise3_cos_xy, noise4_sin_xy, noise4_cos_xy;
+
+                const bucketCounts = new Int32Array(56);
+                let bucketX = [];
+                let bucketY = [];
+                let bucketChars = [];
+
+                const mouse = { x: width / 2, y: height / 2, tx: width / 2, ty: height / 2 };
+                let currentShape = 'eye';
+
+                let scrollY = window.scrollY;
+
+                const HOVER_CHARS = " ...---_::;;++==**???xyzabc123456789N$#";
+                const SHAPE_CHARS = " .-=*&%#@M";
+                const HOVER_CHARS_LEN = 38;
+                const SHAPE_CHARS_LEN = 9;
+                const hexToRgba = (hex, a) => {
+                    const [r, g, b] = hex.match(/\w\w/g).map(x => parseInt(x, 16));
+                    return `rgba(${r}, ${g}, ${b}, ${a})`;
+                };
+
+                const rootStyles = getComputedStyle(document.documentElement);
+                const EYE_COLOR = rootStyles.getPropertyValue('--shape-eye').trim() || "#ffffff";
+                const TORUS_COLOR = rootStyles.getPropertyValue('--shape-torus').trim() || "#00ff00";
+                const PAWN_COLOR = rootStyles.getPropertyValue('--shape-pawn').trim() || "#ffe600";
+                const LOGO_COLOR = rootStyles.getPropertyValue('--shape-logo').trim() || "#ff00ff";
+
+                const ALPHA_STYLES = Array.from({ length: 11 }, (_, i) => `rgba(180, 190, 200, ${i / 10})`);
+                const EYE_STYLES = Array.from({ length: 11 }, (_, i) => hexToRgba(EYE_COLOR, i / 10));
+                const TORUS_STYLES = Array.from({ length: 11 }, (_, i) => hexToRgba(TORUS_COLOR, i / 10));
+                const PAWN_STYLES = Array.from({ length: 11 }, (_, i) => hexToRgba(PAWN_COLOR, i / 10));
+                const LOGO_STYLES = Array.from({ length: 11 }, (_, i) => hexToRgba(LOGO_COLOR, i / 10));
+
+                const BAYER = new Float32Array([0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => v / 16.0 - 0.5));
 
                 const scene = new THREE.Scene();
-                // Match the aesthetic
-                scene.background = new THREE.Color(0x0a0a0a);
-
-                const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+                const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
                 camera.position.z = 12;
 
-                const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false });
+                const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true, alpha: true });
                 renderer.setPixelRatio(1);
+                renderer.setClearColor(0x000000, 0);
 
-                const eyeGroup = new THREE.Group();
-
-                // Sclera
-                const scleraGeo = new THREE.SphereGeometry(2.5, 32, 32);
-                const scleraMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
-                const sclera = new THREE.Mesh(scleraGeo, scleraMat);
-                eyeGroup.add(sclera);
-
-                // Iris
-                const irisGeo = new THREE.SphereGeometry(1.2, 32, 16);
-                const irisMat = new THREE.MeshLambertMaterial({ color: 0x444444 });
-                const iris = new THREE.Mesh(irisGeo, irisMat);
-                iris.position.z = 2.25;
-                iris.scale.z = 0.2;
-                eyeGroup.add(iris);
-
-                // Pupil
-                const pupilGeo = new THREE.SphereGeometry(0.5, 32, 16);
-                const pupilMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-                const pupil = new THREE.Mesh(pupilGeo, pupilMat);
-                pupil.position.z = 2.45;
-                pupil.scale.z = 0.1;
-                eyeGroup.add(pupil);
-
-                // Cornea Highlight
-                const corneaGeo = new THREE.SphereGeometry(2.55, 32, 32);
-                const corneaMat = new THREE.MeshPhongMaterial({
-                    color: 0xffffff, specular: 0xffffff, shininess: 400,
-                    transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending
-                });
-                const cornea = new THREE.Mesh(corneaGeo, corneaMat);
-                eyeGroup.add(cornea);
-
-                scene.add(eyeGroup);
-
-                // Lights
-                scene.add(new THREE.AmbientLight(0xffffff, 0.2));
-                const mainLight = new THREE.DirectionalLight(0xffffff, 1.8);
+                scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+                const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
                 mainLight.position.set(5, 8, 10);
                 scene.add(mainLight);
-                const rimLight = new THREE.PointLight(0xffffff, 0.6, 50);
+                const rimLight = new THREE.PointLight(0xaaaaaa, 1.0, 50);
                 rimLight.position.set(-8, -8, -5);
                 scene.add(rimLight);
 
-                function resizeEye() {
-                    const fontSize = 16;
-                    const charWidth = fontSize * 0.6;
-                    const charHeight = fontSize;
+                const eyeGroup = new THREE.Group();
+                const sclera = new THREE.Mesh(new THREE.SphereGeometry(2.5, 32, 32), new THREE.MeshLambertMaterial({
+                    color: 0xff0000
+                }));
+                const iris = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 16), new THREE.MeshLambertMaterial({
+                    color: 0x550000
+                }));
+                iris.position.z = 2.25; iris.scale.z = 0.2;
+                const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 16), new THREE.MeshBasicMaterial({
+                    color: 0x000000
+                }));
+                pupil.position.z = 2.45; pupil.scale.z = 0.1;
+                eyeGroup.add(sclera, iris, pupil);
+                scene.add(eyeGroup);
 
-                    // Fallback to guarantee dimensions aren't zero, fixing the "Framebuffer not complete" error
-                    const w = window.innerWidth || 1024;
-                    const h = window.innerHeight || 768;
+                const torusGroup = new THREE.Group();
+                const torus = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.7, 16, 64), new THREE.MeshStandardMaterial({
+                    color: 0x00ff00, roughness: 0.2, metalness: 0.8
+                }));
+                torusGroup.add(torus); torusGroup.scale.set(0, 0, 0); scene.add(torusGroup);
 
-                    columns = Math.max(1, Math.ceil(w / charWidth));
-                    rows = Math.max(1, Math.ceil(h / charHeight));
+                const pawnGroup = new THREE.Group();
+                const pawnMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff, roughness: 0.4 });
 
-                    asciiContainer.style.fontSize = fontSize + 'px';
-                    asciiContainer.style.lineHeight = charHeight + 'px';
+                const pawnBase = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 0.4, 32), pawnMaterial);
+                pawnBase.position.y = -1.8;
+                const pawnBody = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.9, 1.8, 32), pawnMaterial);
+                pawnBody.position.y = -0.7;
+                const pawnCollar = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.15, 16, 32), pawnMaterial);
+                pawnCollar.position.y = 0.3;
+                pawnCollar.rotation.x = Math.PI / 2;
+                const pawnHead = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), pawnMaterial);
+                pawnHead.position.y = 1;
 
-                    asciiContainer.style.width = (columns * charWidth) + 'px';
-                    asciiContainer.style.height = (rows * charHeight) + 'px';
+                pawnGroup.add(pawnBase, pawnBody, pawnCollar, pawnHead);
+                pawnGroup.scale.set(0, 0, 0);
+                scene.add(pawnGroup);
 
-                    camera.aspect = w / h;
-                    camera.updateProjectionMatrix();
+                const logoGroup = new THREE.Group();
+                const logoMaterial = new THREE.MeshStandardMaterial({ color: 0xff00ff, roughness: 0.1, metalness: 0.5 });
+                const logoInner = new THREE.Group();
+                logoInner.scale.set(0.85, 0.85, 0.85);
 
-                    if (renderTarget) renderTarget.dispose();
-                    renderTarget = new THREE.WebGLRenderTarget(columns, rows, {
-                        minFilter: THREE.NearestFilter,
-                        magFilter: THREE.NearestFilter,
-                        format: THREE.RGBAFormat,
-                        type: THREE.UnsignedByteType // Explicit type ensures framebuffer compatibility
+                const extrudeSettings = { depth: 0.12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.015, bevelSegments: 2 };
+
+                const slashShape = new THREE.Shape();
+                slashShape.moveTo(0, 0);
+                slashShape.lineTo(0.66, 0);
+                slashShape.lineTo(2.96, 5.0);
+                slashShape.lineTo(2.3, 5.0);
+                slashShape.lineTo(0, 0);
+                const slashGeo = new THREE.ExtrudeGeometry(slashShape, extrudeSettings);
+                const slash = new THREE.Mesh(slashGeo, logoMaterial);
+                slash.position.set(-3.4, -2.5, -0.06);
+
+                const phiRingShape = new THREE.Shape();
+                phiRingShape.absellipse(0, 0, 1.4, 1.6, 0, Math.PI * 2, false, 0);
+                const phiHole = new THREE.Path();
+                phiHole.absellipse(0, 0, 0.96, 1.36, 0, Math.PI * 2, true, 0);
+                phiRingShape.holes.push(phiHole);
+                const phiRingGeo = new THREE.ExtrudeGeometry(phiRingShape, extrudeSettings);
+                const phiRing = new THREE.Mesh(phiRingGeo, logoMaterial);
+                phiRing.position.set(0.1, 0, -0.06);
+
+                const pillarShape = new THREE.Shape();
+                pillarShape.moveTo(-1.05, -2.32);
+                pillarShape.lineTo(1.05, -2.32);
+                pillarShape.lineTo(1.05, -2.1);
+                pillarShape.lineTo(0.22, -2.1);
+                pillarShape.lineTo(0.22, 2.1);
+                pillarShape.lineTo(1.05, 2.1);
+                pillarShape.lineTo(1.05, 2.32);
+                pillarShape.lineTo(-1.05, 2.32);
+                pillarShape.lineTo(-1.05, 2.1);
+                pillarShape.lineTo(-0.22, 2.1);
+                pillarShape.lineTo(-0.22, -2.1);
+                pillarShape.lineTo(-1.05, -2.1);
+                pillarShape.lineTo(-1.05, -2.32);
+                const pillarGeo = new THREE.ExtrudeGeometry(pillarShape, extrudeSettings);
+                const pillar = new THREE.Mesh(pillarGeo, logoMaterial);
+                pillar.position.set(0.1, 0, -0.06);
+
+                const dotShape = new THREE.Shape();
+                dotShape.absarc(0, 0, 0.38, 0, Math.PI * 2, false);
+                const dotGeo = new THREE.ExtrudeGeometry(dotShape, extrudeSettings);
+                const dot = new THREE.Mesh(dotGeo, logoMaterial);
+                dot.position.set(2.1, -1.95, -0.06);
+
+                logoInner.add(slash, phiRing, pillar, dot);
+                logoGroup.add(logoInner);
+                logoGroup.scale.set(0, 0, 0);
+                scene.add(logoGroup);
+
+                const shapes = { eye: eyeGroup, torus: torusGroup, pawn: pawnGroup, logo: logoGroup };
+
+                Object.values(shapes).forEach(shape => shape.userData = { targetScale: 0, baseRotationY: 0 });
+                
+                // PERFORMANCE: Observer to stop drawing when scrolled past
+                let isAsciiVisible = true;
+                const asciiObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        isAsciiVisible = entry.isIntersecting;
+                    });
+                }, { threshold: 0 });
+                const processPin = document.getElementById('process-pin-container');
+                if (processPin) asciiObserver.observe(processPin);
+                const heroFore = document.getElementById('hero-foreground');
+                if (heroFore) asciiObserver.observe(heroFore);
+                shapes['eye'].userData.targetScale = 1;
+
+                window.switchShape = (target) => {
+                    if (currentShape === target) return;
+                    shapes[currentShape].userData.targetScale = 0;
+                    shapes[target].userData.targetScale = 1;
+                    currentShape = target;
+                };
+
+                const handleResize = () => {
+                    width = window.innerWidth; height = window.innerHeight;
+                    const isMobileNow = width < 768;
+                    charWidth = isMobileNow ? 12 : 9;
+                    charHeight = isMobileNow ? 20 : 15;
+                    
+                    const dpr = window.devicePixelRatio || 1;
+
+                    canvas.width = width * dpr; canvas.height = height * dpr;
+                    ctx.scale(dpr, dpr);
+
+                    columns = Math.ceil(width / charWidth); rows = Math.ceil(height / charHeight);
+                    camera.aspect = width / height; camera.updateProjectionMatrix();
+                    renderer.setSize(columns, rows, false);
+
+                    const totalCells = columns * rows;
+                    pixelBuffer = new Uint8Array(totalCells * 4);
+
+                    colX = new Float32Array(columns); rowY = new Float32Array(rows);
+                    for (let i = 0; i < columns; i++) colX[i] = i * charWidth + charWidth / 2;
+                    for (let j = 0; j < rows; j++) rowY[j] = j * charHeight + charHeight / 2;
+
+                    hashGrid = new Float32Array(totalCells); noise1_sin_x = new Float32Array(columns);
+                    noise1_cos_x = new Float32Array(columns); noise2_sin_y = new Float32Array(rows); noise2_cos_y = new
+                        Float32Array(rows); noise3_sin_xy = new Float32Array(totalCells); noise3_cos_xy = new Float32Array(totalCells);
+                    noise4_sin_xy = new Float32Array(totalCells); noise4_cos_xy = new Float32Array(totalCells);
+
+                    for (let i = 0; i < columns; i++) {
+                        noise1_sin_x[i] = Math.sin(colX[i] * 0.015);
+                        noise1_cos_x[i] = Math.cos(colX[i] * 0.015);
+                    }
+                    for (let j = 0; j < rows; j++) {
+                        noise2_sin_y[j] = Math.sin(rowY[j] * 0.015);
+                        noise2_cos_y[j] = Math.cos(rowY[j] * 0.015);
+                    }
+                    for (let j = 0; j < rows; j++) {
+                        const rowOffset = j * columns;
+                        for (let i = 0; i < columns; i++) {
+                            const idx = rowOffset + i;
+                            const x = colX[i]; const y = rowY[j];
+                            hashGrid[idx] = Math.abs(Math.sin(i * 12.9898 + j * 78.233) * 43758.5453) % 1;
+                            noise3_sin_xy[idx] = Math.sin((x + y) * 0.025); noise3_cos_xy[idx] = Math.cos((x + y) * 0.025);
+                            noise4_sin_xy[idx] = Math.sin((x - y) * 0.02); noise4_cos_xy[idx] = Math.cos((x - y) * 0.02);
+                        }
+                    }
+                    bucketX = Array(56).fill(0).map(() => new Float32Array(totalCells));
+                    bucketY = Array(56).fill(0).map(() => new Float32Array(totalCells));
+                    bucketChars = Array(56).fill(0).map(() => new Array(totalCells));
+
+                    ctx.font = 'bold 12px "Courier New", Courier, monospace';
+                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                };
+
+                const handleScroll = () => { scrollY = window.scrollY; };
+
+                let resizeTimeout;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(handleResize, 150);
+                });
+                window.addEventListener('scroll', handleScroll, { passive: true });
+                window.addEventListener('mousemove', (e) => { mouse.tx = e.clientX; mouse.ty = e.clientY; });
+                handleResize();
+
+                let blinkTimer = 0;
+                let isBlinking = false;
+
+                const animate = (timestamp) => {
+                    animationFrameId = requestAnimationFrame(animate);
+                    
+                    if (!isAsciiVisible) return;
+
+                    mouse.x += (mouse.tx - mouse.x) * 0.25;
+                    mouse.y += (mouse.ty - mouse.y) * 0.25;
+                    const time = timestamp * 0.001 || 0;
+
+                    const tXNorm = (mouse.x / width) * 2 - 1;
+                    const tYNorm = -(mouse.y / height) * 2 + 1;
+
+                    const scrollRatio = Math.max(0, Math.min(scrollY / height, 1));
+                    const scrollFade = Math.max(0, 1 - scrollRatio * 1.5);
+
+                    Object.values(shapes).forEach(obj => {
+                        const ts = obj.userData.targetScale * scrollFade;
+                        let scaleY = (obj === eyeGroup && isBlinking) ? 0.05 : ts;
+
+                        obj.scale.x += (ts - obj.scale.x) * 0.1;
+                        obj.scale.y += (scaleY - obj.scale.y) * 0.15;
+                        obj.scale.z += (ts - obj.scale.z) * 0.1;
+
+                        const tiltAmount = (obj === logoGroup) ? 0.2 : 0.8;
+                        obj.rotation.y += ((tXNorm * tiltAmount + obj.userData.baseRotationY) - obj.rotation.y) * 0.25;
+                        obj.rotation.x += (-tYNorm * tiltAmount - obj.rotation.x) * 0.25;
+                        obj.position.y = Math.sin(time * 1.5) * 0.2;
                     });
 
-                    renderer.setSize(columns, rows);
-                    pixelBuffer = new Uint8Array(columns * rows * 4);
-                }
-                window.addEventListener('resize', resizeEye);
-                resizeEye();
-
-                let lastFrameTime = 0;
-                const fpsLimit = 30; // 30 FPS halves the processing load without visible quality loss for ASCII
-                const frameInterval = 1000 / fpsLimit;
-
-                function animateEye(time) {
-                    requestAnimationFrame(animateEye);
-
-                    // Stop execution if renderTarget isn't successfully created
-                    if (!renderTarget || columns < 1 || rows < 1) return;
-
-                    let targetX, targetY;
-
-                    if (isTouchDevice) {
-                        // Gentle idle panning for mobile devices
-                        targetX = Math.sin(Date.now() * 0.001) * 0.3;
-                        targetY = Math.cos(Date.now() * 0.0013) * 0.3;
-                    } else {
-                        // Precise mouse tracking for desktop
-                        targetX = (mouseX / window.innerWidth) * 2 - 1;
-                        targetY = -(mouseY / window.innerHeight) * 2 + 1;
-                    }
-
-                    const targetRotY = targetX * (Math.PI / 3);
-                    const targetRotX = -targetY * (Math.PI / 3);
-
-                    eyeGroup.rotation.y += (targetRotY - eyeGroup.rotation.y) * 0.1;
-                    eyeGroup.rotation.x += (targetRotX - eyeGroup.rotation.x) * 0.1;
-                    eyeGroup.position.y = Math.sin(Date.now() * 0.0015) * 0.3;
-
-                    blinkTimer++;
-                    if (blinkTimer > 180) {
-                        if (Math.random() > 0.8) {
-                            eyeGroup.scale.y = 0.05;
-                            setTimeout(() => eyeGroup.scale.y = 1, 120);
-                        }
-                        blinkTimer = 0;
-                    }
-
-                    // Throttle the heavy pixel reading and string concatenation to 30 FPS
-                    if (time - lastFrameTime >= frameInterval) {
-                        lastFrameTime = time;
-
-                        try {
-                            renderer.setRenderTarget(renderTarget);
-                            renderer.render(scene, camera);
-                            renderer.readRenderTargetPixels(renderTarget, 0, 0, columns, rows, pixelBuffer);
-
-                            const chars = new Array(rows * (columns + 1));
-                            let ptr = 0;
-                            let pixelIndex = 0;
-
-                            for (let y = rows - 1; y >= 0; y--) {
-                                // Calculate starting pixel index for this row since we are iterating top-down in text but bottom-up in WebGL buffer
-                                pixelIndex = y * columns * 4;
-                                for (let x = 0; x < columns; x++) {
-                                    const r = pixelBuffer[pixelIndex++];
-                                    const g = pixelBuffer[pixelIndex++];
-                                    const b = pixelBuffer[pixelIndex++];
-                                    pixelIndex++; // skip alpha
-
-                                    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-                                    const bayerValue = (bayerMatrix[y % 4][x % 4] / 16.0) - 0.5;
-                                    const finalLum = Math.max(0, Math.min(255, lum + bayerValue * 64));
-                                    const charIndex = Math.floor((finalLum / 255) * (ASCII_CHARS.length - 1));
-                                    chars[ptr++] = ASCII_CHARS[charIndex];
-                                }
-                                chars[ptr++] = '\n';
+                    if (currentShape === 'eye') {
+                        blinkTimer++;
+                        if (blinkTimer > 150) {
+                            if (Math.random() > 0.7) {
+                                isBlinking = true;
+                                setTimeout(() => { isBlinking = false; }, 150);
                             }
-                            asciiContainer.textContent = chars.join('');
-                        } catch (err) {
-                            // Silent catch to prevent console flooding if framebuffer is temporarily incomplete
+                            blinkTimer = 0;
                         }
                     }
-                }
-                animateEye();
+
+                    renderer.clear();
+                    renderer.render(scene, camera);
+                    const gl = renderer.getContext();
+                    gl.readPixels(0, 0, columns, rows, gl.RGBA, gl.UNSIGNED_BYTE, pixelBuffer);
+
+                    ctx.fillStyle = "#0a0a0a";
+                    ctx.fillRect(0, 0, width, height);
+
+                    const t1 = time, t2 = -time, t3 = time * 1.2, t4 = -time * 0.8;
+                    const sinT1 = Math.sin(t1), cosT1 = Math.cos(t1);
+                    const sinT2 = Math.sin(t2), cosT2 = Math.cos(t2);
+                    const sinT3 = Math.sin(t3), cosT3 = Math.cos(t3);
+                    const sinT4 = Math.sin(t4), cosT4 = Math.cos(t4);
+
+                    const invMaxRadius = 1.0 / Math.min(400, Math.max(width, height) * 0.35);
+
+                    bucketCounts.fill(0);
+
+                    for (let j = 0; j < rows; j++) {
+                        const webglY = rows - 1 - j;
+                        const rowOffset = j * columns;
+                        const y = rowY[j];
+                        const dy = y - mouse.y;
+                        const dySq = dy * dy;
+
+                        for (let i = 0; i < columns; i++) {
+                            const idx = rowOffset + i;
+                            const x = colX[i];
+                            const pxIdx = (webglY * columns + i) * 4;
+
+                            let alphaToDraw = 0;
+                            let charToDraw = '';
+                            let shapeOffset = 0; 
+
+                            if (pixelBuffer[pxIdx + 3] > 10) {
+                                const r = pixelBuffer[pxIdx];
+                                const g = pixelBuffer[pxIdx + 1];
+                                const b = pixelBuffer[pxIdx + 2];
+
+                                const maxVal = Math.max(r, g, b); 
+
+                                if (g > r + 30 && g > b + 30) {
+                                    shapeOffset = 11; 
+                                } else if (b > r + 30 && b > g + 30) {
+                                    shapeOffset = 22; 
+                                } else if (r > g + 30 && b > g + 30) {
+                                    shapeOffset = 33; 
+                                }
+
+                                let finalLum = maxVal + BAYER[(webglY % 4) * 4 + (i % 4)] * 64;
+                                if (finalLum < 0) finalLum = 0; else if (finalLum > 255) finalLum = 255;
+
+                                charToDraw = SHAPE_CHARS[Math.floor(finalLum * 0.00392156 * SHAPE_CHARS_LEN)];
+                                alphaToDraw = 1.0 * Math.min(1, scrollFade * 1.5);
+                            } else {
+                                const dx = x - mouse.x;
+                                let distance = Math.sqrt(dx * dx + dySq);
+
+                                const v1 = noise1_sin_x[i] * cosT1 + noise1_cos_x[i] * sinT1;
+                                const v2 = noise2_sin_y[j] * cosT2 + noise2_cos_y[j] * sinT2;
+                                const v3 = noise3_sin_xy[idx] * cosT3 + noise3_cos_xy[idx] * sinT3;
+                                const v4 = noise4_cos_xy[idx] * cosT4 - noise4_sin_xy[idx] * sinT4;
+
+                                distance += (v1 + v2 + v3 + v4) * 25;
+
+                                let intensity = 1.0 - (distance * invMaxRadius);
+                                if (intensity > 0) {
+                                    let mixedIntensity = intensity + (hashGrid[idx] * 0.3 - 0.15);
+                                    if (mixedIntensity < 0) mixedIntensity = 0; else if (mixedIntensity > 1) mixedIntensity = 1;
+
+                                    charToDraw = HOVER_CHARS[Math.floor(mixedIntensity * HOVER_CHARS_LEN)];
+                                    alphaToDraw = mixedIntensity * 0.8;
+                                    if (alphaToDraw > 0.3) alphaToDraw = 0.3;
+                                }
+                            }
+
+                            if (alphaToDraw > 0) {
+                                let bucketIndex = Math.round(alphaToDraw * 10);
+                                if (pixelBuffer[pxIdx + 3] > 10) {
+                                    bucketIndex += 11 + shapeOffset;
+                                }
+
+                                if (bucketIndex > 0 && bucketIndex < 56) {
+                                    const count = bucketCounts[bucketIndex];
+                                    bucketX[bucketIndex][count] = x;
+                                    bucketY[bucketIndex][count] = y;
+                                    bucketChars[bucketIndex][count] = charToDraw;
+                                    bucketCounts[bucketIndex]++;
+                                }
+                            }
+                        }
+                    }
+
+                    for (let k = 1; k < 56; k++) {
+                        const count = bucketCounts[k];
+                        if (count === 0) continue;
+
+                        if (k < 11) {
+                            ctx.fillStyle = ALPHA_STYLES[k];
+                        } else if (k < 22) {
+                            ctx.fillStyle = EYE_STYLES[k - 11];
+                        } else if (k < 33) {
+                            ctx.fillStyle = TORUS_STYLES[k - 22];
+                        } else if (k < 44) {
+                            ctx.fillStyle = PAWN_STYLES[k - 33];
+                        } else {
+                            ctx.fillStyle = LOGO_STYLES[k - 44];
+                        }
+
+                        const bx = bucketX[k];
+                        const by = bucketY[k];
+                        const bc = bucketChars[k];
+
+                        for (let m = 0; m < count; m++) {
+                            ctx.fillText(bc[m], bx[m], by[m]);
+                        }
+                    }
+                };
+
+                animate(0);
+
             }
+            document.querySelectorAll('.interactive-phrase[data-shape]').forEach(el => {
+                el.addEventListener('mouseenter', () => window.switchShape(el.dataset.shape));
+                el.addEventListener('mouseleave', () => window.switchShape('eye'));
+            });
 
-            initAsciiEye();
-
-            // Initialize all scroll animations BEFORE the preloader fades out to prevent DOM reflow jumps
+            initOptimizedAscii();
             initScrollAnimations();
+            
+            // Iniciar el efecto Glitch
+            initHeroGlitch();
 
             // =======================================================
             // PRELOADER & INTRO SEQUENCE TIMELINE
@@ -845,214 +1266,94 @@
             const row2 = document.getElementById("preload-row-2");
             let intervalCount = 0;
 
-            gsap.set("#intro-text-1", { opacity: 0, y: 30 });
-            gsap.set("#intro-text-2", { opacity: 0, y: -30 });
-            gsap.set("#ascii-container", { scale: 1.5, opacity: 0 });
-            gsap.set("#hero-footer-text", { opacity: 0 });
-            gsap.set("#main-content", { opacity: 0 }); // Start hidden via GSAP so it can be animated back
+            gsap.set("#main-content", { opacity: 0 }); 
 
             const scrambleInterval = setInterval(() => {
                 row1.innerText = Array(5).fill(0).map(() => charsArray[Math.floor(Math.random() * charsArray.length)]).join('');
                 row2.innerText = Array(5).fill(0).map(() => charsArray[Math.floor(Math.random() * charsArray.length)]).join('');
                 intervalCount++;
 
-                if (intervalCount >= 40) {
+                if (intervalCount >= 18) {
                     clearInterval(scrambleInterval);
                     const tl = gsap.timeline({
                         onComplete: () => {
                             document.getElementById('preloader').style.display = 'none';
-                            document.body.classList.remove("overflow-hidden"); // Remove native scroll lock
+                            document.body.classList.remove("overflow-hidden"); 
                             ScrollTrigger.refresh();
-                            lenis.start(); // Unlock Lenis
+                            lenis.start(); 
                         }
                     });
 
-                    tl.to([row1, row2], { opacity: 0, duration: 0.2 })
-                        .to("#preloader-wipe", { top: "0%", duration: 0.6, ease: "expo.inOut" }, "-=0.1")
-                        .to("#main-content", { opacity: 1, duration: 0.1 }, "-=0.2") // Re-added this line so content fades in
-                        .to("#preloader", { yPercent: -100, duration: 0.8, ease: "expo.inOut" })
+                    gsap.set("#main-content", { opacity: 0 });
+                    gsap.set("#hero-foreground", { scale: 1.10, transformOrigin: "center center" });
 
-                        // Sped up hero fade-in by reducing duration and starting them while the preloader finishes sliding up
-                        .to("#intro-text-1", { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }, "-=0.6")
-                        .to("#intro-text-2", { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }, "-=0.4")
-                        .to("#ascii-container", { scale: 1, opacity: 1, duration: 2, ease: "expo.out" }, "-=0.4")
-                        .to("#hero-footer-text", { opacity: 1, duration: 1.0, ease: "power2.out" }, "-=1.0");
+                    tl.to([row1, row2], { opacity: 0, duration: 0.2 })
+                        .to("#main-content", { opacity: 1, duration: 0.1 }, "-=0.1")
+                        .to("#hero-foreground", { scale: 1, duration: 1.6, ease: "power3.out" })
+                        .to("#preloader", { opacity: 0, duration: 1.0, ease: "power2.inOut" }, "<");
                 }
             }, 35);
 
 
             // =======================================================
-            // SCROLL ANIMATIONS (Triggered after Intro Ends)
+            // SCROLL ANIMATIONS & FOOTER PHYSICS LOGIC
             // =======================================================
+            
+            // Variables globales de Matter.js movidas aquí para acceso seguro
+            let engine = Matter.Engine.create();
+            let world = engine.world;
+            let runner = null;
+            let physicsInitialized = false;
+            let letters = []; 
+            let currentState = 1; // 1: Initial Fall, 2: Locked (Assembly), 3: Play & Post-Close
+            let ground, rightWall, leftWall;
+            let mouseConstraint = null;
+            let physicsResizeHandler = null;
+
+            // 1. Integración de Visibility API
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "hidden") {
+                    if (runner) Matter.Runner.stop(runner);
+                } else {
+                    if (runner && physicsInitialized && (currentState === 1 || currentState === 3)) {
+                        Matter.Runner.start(runner, engine);
+                    }
+                }
+            });
+
             function initScrollAnimations() {
 
-                // ==========================================
-                // HERO PINNED SCROLL SEQUENCE
-                // ==========================================
-                gsap.set("#intro-text-3", { opacity: 1, y: 0 }); // Reveal container
-
-                const splitNode = (selector, baseClass) => {
-                    const el = document.querySelector(selector);
-                    if (!el) return [];
-                    const processNode = (node) => {
-                        if (node.nodeType === 3) {
-                            const chars = node.nodeValue.split('');
-                            const frag = document.createDocumentFragment();
-                            chars.forEach(c => {
-                                const span = document.createElement('span');
-                                span.className = baseClass + ' inline-block whitespace-pre';
-                                span.innerText = c;
-                                if (c.trim() !== "") span.dataset.o = c;
-                                frag.appendChild(span);
-                            });
-                            node.parentNode.replaceChild(frag, node);
-                        } else if (node.nodeType === 1 && !node.classList.contains(baseClass)) {
-                            Array.from(node.childNodes).forEach(processNode);
-                        }
-                    };
-                    Array.from(el.childNodes).forEach(processNode);
-                    return gsap.utils.toArray(`${selector} .${baseClass}`);
-                };
-
-                const outChars = [...splitNode("#intro-text-1", "out-char"), ...splitNode("#intro-text-2", "out-char")];
-                const inChars = splitNode("#intro-text-3", "in-char");
-
-                gsap.set(inChars, { opacity: 0 });
-
-                let heroScrollTl = gsap.timeline({
+                gsap.to(".scroll-indicator", {
+                    autoAlpha: 0, 
+                    y: 20, 
+                    pointerEvents: "none",
+                    duration: 0.5,
+                    ease: "power2.inOut",
                     scrollTrigger: {
-                        trigger: "#hero-ascii",
-                        start: "top top",
-                        end: "+=300%", // Extended runway for reading and final glitch out
-                        pin: true,
-                        scrub: true,
+                        trigger: "body",
+                        start: "top top", 
+                        end: "+=150", 
+                        scrub: 0.5 
                     }
                 });
 
-                const scrambleStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*&%!";
-                const outDummy = { p: 0 };
-                const inDummy = { p: 0 };
-
-                heroScrollTl
-                    // PHASE 1: Glitch out phrases 1 & 2
-                    .to(outDummy, {
-                        p: 1,
-                        duration: 1,
-                        ease: "none",
-                        onUpdate: () => {
-                            const progress = outDummy.p;
-                            outChars.forEach((span, i) => {
-                                const charThreshold = (i / outChars.length) * 0.7;
-                                let charP = (progress - charThreshold) / 0.3;
-                                charP = Math.max(0, Math.min(1, charP));
-
-                                if (span.dataset.o) {
-                                    if (charP > 0 && charP < 1) {
-                                        if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
-                                        span.style.opacity = 1 - charP;
-                                    } else if (charP >= 1) {
-                                        span.style.opacity = 0;
-                                        span.innerText = span.dataset.o;
-                                    } else {
-                                        span.style.opacity = 1;
-                                        span.innerText = span.dataset.o;
-                                    }
-                                } else {
-                                    span.style.opacity = 1 - charP;
-                                }
-                            });
-                        }
-                    }, 0)
-                    // PHASE 2: Type in phrase 3 (overlaps end of Phase 1)
-                    .to(inChars, {
-                        opacity: 1,
-                        stagger: 0.02,
-                        duration: 0.2, // Small duration since scrub applies it over scroll distance
-                        ease: "none"
-                    }, 0.5)
-                    .to("#hero-footer-text", { opacity: 0, duration: 0.5 }, 0)
-
-                    // PHASE 3: Reading Pause (Timeline just advances empty space from 1.0 to 2.0)
-                    .to({}, { duration: 1 }, 1)
-
-                    // PHASE 4: Glitch out phrase 3
-                    .to(inDummy, {
-                        p: 1,
-                        duration: 1,
-                        ease: "none",
-                        onUpdate: () => {
-                            const progress = inDummy.p;
-                            inChars.forEach((span, i) => {
-                                const charThreshold = (i / inChars.length) * 0.7;
-                                let charP = (progress - charThreshold) / 0.3;
-                                charP = Math.max(0, Math.min(1, charP));
-
-                                if (span.dataset.o) {
-                                    if (charP > 0 && charP < 1) {
-                                        if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
-                                        span.style.opacity = 1 - charP;
-                                    } else if (charP >= 1) {
-                                        span.style.opacity = 0;
-                                    } else {
-                                        // Don't force opacity to 1 here, let the staggered "typing" animation control the initial 1 state
-                                        span.innerText = span.dataset.o;
-                                    }
-                                } else {
-                                    span.style.opacity = 1 - charP;
-                                }
-                            });
-                        }
-                    }, 2);
-
-
                 document.querySelectorAll('.split-line').forEach(el => {
-                    const text = el.innerText;
-                    el.innerHTML = `<span class="line-mask"><span class="line-mask-inner block">${text}</span></span>`;
+                    const text = el.innerHTML;
+                    if (!el.querySelector('.line-mask-inner')) {
+                        el.innerHTML = `<span class="line-mask"><span class="line-mask-inner block">${text}</span></span>`;
+                    }
                     gsap.to(el.querySelector('.line-mask-inner'), {
                         y: "0%", duration: 1.2, ease: "expo.out",
                         scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" }
                     });
                 });
 
-                gsap.utils.toArray('.cascade-text span').forEach((span, i) => {
-                    gsap.fromTo(span, { opacity: 0, x: -15 }, {
-                        opacity: 1, x: 0, duration: 1, ease: "power3.out",
-                        scrollTrigger: { trigger: ".cascade-text", start: "top 80%", toggleActions: "play none none reverse" }, delay: i * 0.05
-                    });
-                });
-
-                gsap.utils.toArray('.sculpture-word').forEach((word, i) => {
-                    gsap.fromTo(word, { opacity: 0, yPercent: 120, rotateZ: 2 }, {
-                        opacity: 1, yPercent: 0, rotateZ: 0, duration: 1.2, ease: "expo.out",
-                        scrollTrigger: { trigger: word, start: "top 90%", toggleActions: "play none none reverse" }, delay: (i % 3) * 0.05
-                    });
-                });
-
-                // ==========================================
-                // HIDE FLOATING CONTACT BUTTON ON FOOTER
-                // ==========================================
-                gsap.to("#floating-contact-btn", {
-                    opacity: 0,
-                    pointerEvents: "none",
-                    duration: 0.3,
-                    scrollTrigger: {
-                        trigger: "#contact",
-                        start: "top 85%", // Starts fading just as the black footer begins pushing up the bottom of the screen
-                        end: "top 70%",   // Quickly fully hidden as the footer takes up more space
-                        scrub: true
-                    }
-                });
-
-                // ==========================================
-                // HORIZONTAL SCROLL FOR PROCESS SECTION
-                // ==========================================
                 const processPin = document.querySelector('#process-pin-container');
                 const processSlider = document.querySelector('.process-slider');
                 const processCards = gsap.utils.toArray('.process-block-card');
 
                 if (processPin && processSlider && processCards.length) {
 
-                    // Animate Header Reveal inside the pin
                     gsap.to('.process-header-reveal', {
                         y: "0%",
                         duration: 1.2,
@@ -1060,9 +1361,8 @@
                         scrollTrigger: { trigger: processPin, start: "top 80%", toggleActions: "play none none reverse" }
                     });
 
-                    // Sliding eye up to "peek" just as Process section enters viewport
                     gsap.to("#ascii-wrapper", {
-                        yPercent: -50,
+                        yPercent: 0,
                         ease: "none",
                         scrollTrigger: {
                             trigger: processPin,
@@ -1072,46 +1372,21 @@
                         }
                     });
 
-                    // HORIZONTAL SCROLL PIN (Defined before eye exit so it properly accounts for the added pin spacing)
                     let getScrollAmount = () => -(processSlider.scrollWidth - window.innerWidth + 100);
 
                     gsap.to(processSlider, {
                         x: getScrollAmount,
-                        ease: "none", // Must be none for 1:1 scrubbed scrolling
+                        ease: "none", 
                         scrollTrigger: {
                             trigger: processPin,
                             start: "top top",
                             end: () => `+=${processSlider.scrollWidth - window.innerWidth}`,
                             pin: true,
                             scrub: true,
-                            invalidateOnRefresh: true,
-                            onUpdate: (self) => {
-                                let totalCards = processCards.length;
-                                let currentIdx = Math.floor(self.progress * totalCards);
-                                let phase = Math.min(currentIdx, totalCards - 1) + 1;
-                                document.getElementById('process-counter').innerText = "0" + phase;
-                            }
+                            invalidateOnRefresh: true
                         }
                     });
-
-                    // Eye perfectly static during horizontal scroll because it's fixed and we do nothing here...
-
-                    // Exit eye completely off-screen AFTER Process section unpins and user scrolls to footer
-                    // By pinning the exit trigger to #contact (the next section), GSAP automatically inherits the entire
-                    // horizontal pin spacing delay. It will not fire a single pixel until the horizontal scroll finishes.
-                    gsap.to("#ascii-wrapper", {
-                        yPercent: -150, // Move it way off screen
-                        ease: "none",
-                        scrollTrigger: {
-                            trigger: "#contact", // Next element in the DOM
-                            start: "top bottom", // Trigger exactly when horizontal scrolling ends and footer begins revealing
-                            end: "top top",      // End exactly when the footer reaches the top of the monitor
-                            scrub: true
-                        }
-                    });
-
                 }
-
 
                 const workItems = document.querySelectorAll('.work-list-item');
                 workItems.forEach(item => {
@@ -1121,22 +1396,42 @@
                     );
                 });
 
-                // -----------------------------------------------------
                 // MATTER.JS FOOTER PHYSICS 
-                // -----------------------------------------------------
                 const container = document.getElementById('physics-container');
-                let engine = Matter.Engine.create();
-                let world = engine.world;
-                let physicsInitialized = false;
-                let runner = null;
-
+                const metaBar = document.getElementById('footer-meta-bar'); // Seleccionamos la barra de metadatos
+                
+                // 2. Limpieza estricta de Memory Leaks
                 function resetPhysics() {
                     if (runner) Matter.Runner.stop(runner);
+                    
+                    // Matar eventos globales
+                    Matter.Events.off(engine);
+                    if (mouseConstraint) {
+                        Matter.Events.off(mouseConstraint);
+                        mouseConstraint = null;
+                    }
+                    
+                    // Remover Event Listener responsable de desalineación
+                    if (physicsResizeHandler) {
+                        window.removeEventListener('resize', physicsResizeHandler);
+                        physicsResizeHandler = null;
+                    }
+
                     Matter.World.clear(world);
                     Matter.Engine.clear(engine);
-                    container.innerHTML = ''; // Remove all cloned physical letters
-                    document.getElementById('measurement-container').style.opacity = '1'; // Show measurement container again for text plotting
+                    container.innerHTML = ''; 
+                    document.getElementById('measurement-container').style.opacity = '1'; 
                     physicsInitialized = false;
+                    letters = []; 
+                    currentState = 1;
+
+                    // Reset messages & Button just in case
+                    gsap.set("#stay-and-play-msg", { opacity: 0 });
+                    const ctaBtn = document.getElementById('cta-start-project');
+                    if (ctaBtn) {
+                        ctaBtn.innerHTML = 'Start Project';
+                        gsap.set(ctaBtn, { opacity: 0, pointerEvents: "none" });
+                    }
                 }
 
                 function initPhysics() {
@@ -1145,12 +1440,20 @@
 
                     const width = container.clientWidth;
                     const height = container.clientHeight;
+                    
+                    // Medimos el contenedor y la barra inferior para calcular la línea exacta de colisión
                     const containerRect = container.getBoundingClientRect();
-
+                    const metaRect = metaBar.getBoundingClientRect();
+                    
                     const thickness = 100;
-                    const ground = Matter.Bodies.rectangle(width / 2, height - 150 + thickness / 2, width * 2, thickness, { isStatic: true });
-                    const leftWall = Matter.Bodies.rectangle(-thickness / 2, height / 2, thickness, height * 3, { isStatic: true });
-                    const rightWall = Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height * 3, { isStatic: true });
+                    
+                    // CÁLCULO DE SUELO DINÁMICO: Top de la barra menos top del contenedor. 
+                    // Restamos -10px extra para absorber el padding inferior invisible de la tipografía Serif y quede "a ras".
+                    const groundY = metaRect.top - containerRect.top - 10;
+                    
+                    ground = Matter.Bodies.rectangle(width / 2, groundY + thickness / 2, width * 2, thickness, { isStatic: true });
+                    leftWall = Matter.Bodies.rectangle(-thickness / 2, height / 2, thickness, height * 3, { isStatic: true });
+                    rightWall = Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height * 3, { isStatic: true });
                     Matter.World.add(world, [ground, leftWall, rightWall]);
 
                     const h2 = document.getElementById('footer-massive-text');
@@ -1167,13 +1470,10 @@
                             h2.appendChild(span);
                             measuredSpans.push({ char, span });
                         });
-                        // Add line breaks between words so they stack properly in the DOM before calculating coordinates
                         if (wIdx < words.length - 1) {
                             h2.appendChild(document.createElement('br'));
                         }
                     });
-
-                    const letters = [];
 
                     measuredSpans.forEach((item) => {
                         const rect = item.span.getBoundingClientRect();
@@ -1182,7 +1482,7 @@
                         const y = rect.top - containerRect.top + rect.height / 2;
 
                         const clone = document.createElement('div');
-                        clone.className = "absolute text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center select-none text-[var(--bg)] pointer-events-none";
+                        clone.className = "absolute text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center select-none text-[var(--fg)] pointer-events-none";
                         clone.innerText = item.char;
 
                         clone.style.left = `${x}px`;
@@ -1190,35 +1490,50 @@
                         clone.style.transform = `translate(-50%, -50%)`;
                         container.appendChild(clone);
 
-                        const bodyWidth = rect.width * 0.65; // Increased width and height logic to give letters more physical breathing room
-                        const bodyHeight = rect.height * 0.85;
+                        // Ajuste del bounding box para que no floten tan arriba de la línea
+                        const bodyWidth = rect.width * 0.65; 
+                        const bodyHeight = rect.height * 0.75; 
 
                         const body = Matter.Bodies.rectangle(x, y, bodyWidth, bodyHeight, {
-                            restitution: 0.3, // Slightly bouncier so they scatter more
+                            restitution: 0.3, 
                             friction: 0.8,
                             density: 0.05,
-                            isStatic: true // Removed chamfer for squarer, cleaner stacking
+                            isStatic: true // EMPIEZAN CONGELADAS PARA SER LEÍDAS
                         });
 
-                        letters.push({ element: clone, body: body });
+                        letters.push({ element: clone, body: body, originX: x, originY: y });
                         Matter.World.add(world, body);
                     });
 
                     document.getElementById('measurement-container').style.opacity = '0';
 
+                    // 1. ESPERAR 2 SEGUNDOS PARA QUE EL USUARIO LEA LA FRASE, LUEGO EXPLOSIÓN
                     setTimeout(() => {
-                        letters.forEach(item => {
-                            Matter.Body.setStatic(item.body, false);
-                            Matter.Body.setVelocity(item.body, {
-                                x: (Math.random() - 0.5) * 4,
-                                y: (Math.random() - 0.5) * 4
+                        // Verificamos que el usuario no haya hecho scroll rápido hacia arriba cancelando la física
+                        if (currentState === 1 && physicsInitialized) {
+                            letters.forEach(item => {
+                                Matter.Body.setStatic(item.body, false);
+                                Matter.Body.setVelocity(item.body, {
+                                    x: (Math.random() - 0.5) * 4,
+                                    y: (Math.random() - 0.5) * 4
+                                });
+                                Matter.Body.setAngularVelocity(item.body, (Math.random() - 0.5) * 0.15);
                             });
-                            Matter.Body.setAngularVelocity(item.body, (Math.random() - 0.5) * 0.15);
-                        });
-                    }, 2200);
+                        }
+                    }, 2000);
+
+                    // 2. MOSTRAR BOTÓN START PROJECT 1 SEGUNDO DESPUÉS DE CAER (Total: 3000ms)
+                    setTimeout(() => {
+                        if (currentState === 1 && physicsInitialized) {
+                            const btn = document.getElementById('cta-start-project');
+                            if (btn) {
+                                gsap.to(btn, { opacity: 1, duration: 0.5, onComplete: () => btn.style.pointerEvents = "auto" });
+                            }
+                        }
+                    }, 3000);
 
                     const mouse = Matter.Mouse.create(container);
-                    const mouseConstraint = Matter.MouseConstraint.create(engine, {
+                    mouseConstraint = Matter.MouseConstraint.create(engine, {
                         mouse: mouse,
                         constraint: {
                             stiffness: 0.2,
@@ -1229,10 +1544,10 @@
 
                     const cursorDot = document.getElementById('cursor-dot');
                     Matter.Events.on(mouseConstraint, 'mousedown', function () {
-                        if (mouseConstraint.body) cursorDot.classList.add('hovered');
+                        if (mouseConstraint.body && cursorDot) cursorDot.classList.add('hovered');
                     });
                     Matter.Events.on(mouseConstraint, 'mouseup', function () {
-                        cursorDot.classList.remove('hovered');
+                        if (cursorDot) cursorDot.classList.remove('hovered');
                     });
 
                     Matter.Events.on(engine, 'afterUpdate', function () {
@@ -1243,15 +1558,113 @@
                         });
                     });
 
+                    // ==========================================
+                    // REENSAMBLAJE & NEW TAB LOGIC (CON PROXIES)
+                    // ==========================================
+                    const ctaBtn = document.getElementById('cta-start-project');
+                    if (ctaBtn) {
+                        // Clean duplicate listeners if re-initialized
+                        const newCtaBtn = ctaBtn.cloneNode(true);
+                        ctaBtn.parentNode.replaceChild(newCtaBtn, ctaBtn);
+
+                        newCtaBtn.addEventListener('click', () => {
+                            // Proceed only if we are in Fall (1) or Play (3) state
+                            if (currentState !== 1 && currentState !== 3) return;
+                            currentState = 2; // Locked/Assembly Mode
+
+                            newCtaBtn.style.pointerEvents = 'none';
+                            newCtaBtn.innerHTML = 'ASSEMBLING...';
+                            gsap.to("#stay-and-play-msg", { opacity: 0, duration: 0.3 });
+
+                            const reassemblePromise = new Promise((resolve) => {
+                                let completed = 0;
+                                letters.forEach((item, index) => {
+                                    // 1. Congelamos la física
+                                    Matter.Body.setStatic(item.body, true);
+                                    
+                                    // 2. PROXY DE POSICIÓN: Animamos un objeto falso y lo aplicamos correctamente
+                                    const posProxy = { x: item.body.position.x, y: item.body.position.y };
+                                    gsap.to(posProxy, {
+                                        x: item.originX,
+                                        y: item.originY,
+                                        duration: 1.5,
+                                        ease: "expo.inOut",
+                                        delay: index * 0.03,
+                                        onUpdate: function() {
+                                            Matter.Body.setPosition(item.body, { x: posProxy.x, y: posProxy.y });
+                                        }
+                                    });
+
+                                    // 3. PROXY DE ROTACIÓN: Animamos un ángulo falso y lo aplicamos correctamente
+                                    const angleProxy = { angle: item.body.angle };
+                                    gsap.to(angleProxy, {
+                                        angle: 0,
+                                        duration: 1.5,
+                                        ease: "expo.inOut",
+                                        delay: index * 0.03,
+                                        onUpdate: function() {
+                                            Matter.Body.setAngle(item.body, angleProxy.angle);
+                                        },
+                                        onComplete: () => {
+                                            completed++;
+                                            if (completed === letters.length) {
+                                                resolve();
+                                            }
+                                        }
+                                    });
+                                });
+                            });
+
+                            reassemblePromise.then(() => {
+                                // 1. Open Form in a new tab
+                                window.open("https://francodesignio.notion.site/99f7ea323bbe82d1991081a507e15493?pvs=105", "_blank", "noopener,noreferrer");
+
+                                // 2. Sequence the "Stay and Play" transition
+                                gsap.to(newCtaBtn, { opacity: 0, duration: 0.5 }); // Fade out button temporarily
+                                
+                                setTimeout(() => {
+                                    gsap.to("#stay-and-play-msg", { opacity: 1, duration: 0.5 });
+                                    currentState = 3;
+                                    
+                                    // Le devolvemos la misma energía "explosiva" y caótica de la primera caída
+                                    letters.forEach(item => {
+                                        Matter.Body.setStatic(item.body, false);
+                                        Matter.Body.setVelocity(item.body, {
+                                            x: (Math.random() - 0.5) * 4,
+                                            y: (Math.random() - 0.5) * 4
+                                        });
+                                        Matter.Body.setAngularVelocity(item.body, (Math.random() - 0.5) * 0.15);
+                                    });
+
+                                    // Bring button back for re-use
+                                    setTimeout(() => {
+                                        newCtaBtn.innerHTML = 'Start Project';
+                                        gsap.to(newCtaBtn, { opacity: 1, duration: 0.5, onComplete: () => newCtaBtn.style.pointerEvents = "auto" });
+                                    }, 1000);
+
+                                }, 600); // Small pause after opening tab before falling
+                            });
+                        });
+                    }
+                    // ==========================================
+
                     runner = Matter.Runner.create();
                     Matter.Runner.run(runner, engine);
 
-                    window.addEventListener('resize', () => {
+                    // 5. Asignar y guardar la referencia del Resize handler (Recalculando la barra inferior)
+                    physicsResizeHandler = () => {
+                        if (!physicsInitialized || !container || !metaBar) return;
                         const newWidth = container.clientWidth;
                         const newHeight = container.clientHeight;
-                        Matter.Body.setPosition(ground, { x: newWidth / 2, y: newHeight - 150 + thickness / 2 });
+                        const cRect = container.getBoundingClientRect();
+                        const mRect = metaBar.getBoundingClientRect();
+                        const newGroundY = mRect.top - cRect.top - 10;
+                        
+                        Matter.Body.setPosition(ground, { x: newWidth / 2, y: newGroundY + thickness / 2 });
                         Matter.Body.setPosition(rightWall, { x: newWidth + thickness / 2, y: newHeight / 2 });
-                    });
+                        Matter.Body.setPosition(leftWall, { x: -thickness / 2, y: newHeight / 2 });
+                    };
+                    window.addEventListener('resize', physicsResizeHandler);
                 }
 
                 ScrollTrigger.create({
@@ -1262,10 +1675,265 @@
                         initPhysics();
                     },
                     onLeaveBack: () => {
-                        resetPhysics(); // Reset when scrolled completely out of view upwards
+                        resetPhysics(); 
                     }
                 });
             }
+
+            // =======================================================
+            // ROTATING JOB TITLES LOGIC
+            // =======================================================
+            function initRotatingTitles() {
+                const group1 = [
+                    "Creative Technologist",
+                    "Web Creator",
+                    "UX/UI Specialist",
+                    "Frontend Developer",
+                ];
+
+                const group2 = [
+                    "Narrative Architect",
+                    "Systems Thinker",
+                ];
+
+                const group3 = [
+                    "Product Wizard",
+                    "AI Artisan",
+                    "Concept Sculptor",
+                ];
+
+                const group4 = [
+                    "Void Starer",
+                    "Lousy Cook",
+                    "Ornament Apologist",
+                    "Flow State Skeptic",
+                ];
+
+                const TITLE_DURATION = 3500;
+
+                let isGroup4Active = false;
+                let group4Timer = null;
+
+                const allRoles = [...group1, ...group2, ...group3, ...group4].map((title, index) => {
+                    const words = title.split(' ');
+                    const highlight = words.length > 1 ? words.pop() + '.' : words[0] + '.';
+                    const text = words.length > 0 ? words.join(' ') + ' ' : '';
+                    return { id: `role-${index}`, full: title, text, highlight };
+                });
+
+                const container = document.getElementById('role-container');
+                if (!container) return;
+
+                const sectionToObserve = container.closest('section') || container.parentElement;
+
+                const sectionObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            if (!isGroup4Active && !group4Timer) {
+                                group4Timer = setTimeout(() => {
+                                    isGroup4Active = true;
+                                }, 30000); 
+                            }
+                        } else {
+                            if (group4Timer) {
+                                clearTimeout(group4Timer);
+                                group4Timer = null;
+                            }
+                            isGroup4Active = false;
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                if (sectionToObserve) {
+                    sectionObserver.observe(sectionToObserve);
+                }
+
+                container.innerHTML = '';
+
+                const roleElements = {};
+
+                let tallestHTML = "";
+
+                allRoles.forEach(role => {
+                    const span = document.createElement('span');
+                    const initialClass = role.full === group1[0] ? 'role-visible' : 'role-hidden-bottom';
+
+                    const innerHTMLStr = `
+                        <span class="font-sans font-semibold inline">${role.text}</span>
+                        <span class="italic font-normal text-[var(--fg)]/80 pr-2 inline" style="font-family: 'Instrument Serif', serif;">${role.highlight}</span>
+                    `;
+
+                    span.className = `role-wrapper absolute left-0 top-0 ${initialClass}`;
+                    span.innerHTML = innerHTMLStr;
+                    container.appendChild(span);
+                    roleElements[role.full] = span; 
+
+                    if (role.full.length > tallestHTML.length) {
+                        tallestHTML = innerHTMLStr;
+                    }
+                });
+
+                const spacerElement = document.createElement('span');
+                spacerElement.className = "role-wrapper opacity-0 pointer-events-none invisible"; 
+                spacerElement.style.position = "relative";
+                spacerElement.innerHTML = `<span class="font-sans font-semibold inline">Professional Procrastinator</span><span class="font-serif italic font-normal text-[var(--fg)]/80 pr-2 inline">Technologist.</span>`; 
+                container.appendChild(spacerElement);
+
+                let currentTitle = group1[0];
+                let prevTitle = null;
+                let group1Index = 0;
+
+                setInterval(() => {
+                    prevTitle = currentTitle;
+
+                    const r = Math.random();
+                    if (isGroup4Active && r > 0.90) {
+                        const randomIndex = Math.floor(Math.random() * group4.length);
+                        currentTitle = group4[randomIndex];
+                    } else if (r < 0.75) {
+                        group1Index = (group1Index + 1) % group1.length;
+                        currentTitle = group1[group1Index];
+                    } else if (r < 0.85) {
+                        const randomIndex = Math.floor(Math.random() * group2.length);
+                        currentTitle = group2[randomIndex];
+                    } else {
+                        const randomIndex = Math.floor(Math.random() * group3.length);
+                        currentTitle = group3[randomIndex];
+                    }
+
+                    allRoles.forEach(role => {
+                        const el = roleElements[role.full];
+                        if (role.full !== currentTitle && role.full !== prevTitle) {
+                            el.style.transition = 'none';
+                            el.classList.remove('role-visible', 'role-hidden-top');
+                            el.classList.add('role-hidden-bottom');
+                        }
+                    });
+
+                    void container.offsetWidth;
+
+                    allRoles.forEach(role => {
+                        const el = roleElements[role.full];
+
+                        if (role.full === currentTitle) {
+                            el.style.transition = 'all 800ms cubic-bezier(0.16,1,0.3,1)';
+                            el.classList.remove('role-hidden-bottom', 'role-hidden-top');
+                            el.classList.add('role-visible');
+                        } else if (role.full === prevTitle) {
+                            el.style.transition = 'all 800ms cubic-bezier(0.16,1,0.3,1)';
+                            el.classList.remove('role-visible', 'role-hidden-bottom');
+                            el.classList.add('role-hidden-top');
+                        }
+                    });
+
+                }, TITLE_DURATION);
+            }
+
+            // =======================================================
+            // EXPERTISE FORTUNE WHEEL LOGIC
+            // =======================================================
+            function initExpertiseWheel() {
+                const wheel = document.getElementById('expertise-wheel');
+                if (!wheel) return;
+
+                const axle = document.getElementById('wheel-axle');
+                const tags = gsap.utils.toArray(wheel.querySelectorAll('.wheel-tag'));
+
+                const angleSpacing = (Math.PI * 2) / tags.length; 
+                const totalRotationSpan = tags.length * angleSpacing;
+                const wheelProxy = { rotation: Math.PI * 1.5 };
+
+                const getRadius = () => {
+                    const isMobile = window.innerWidth < 768;
+                    return gsap.utils.clamp(
+                        isMobile ? 105 : 192, 
+                        384, 
+                        window.innerWidth * (isMobile ? 0.29 : 0.22)
+                    );
+                };
+                let radius = getRadius();
+                window.addEventListener('resize', () => {
+                    radius = getRadius();
+                });
+
+                let tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: wheel,
+                        start: "top bottom+=250",
+                        end: "bottom top-=250",
+                        scrub: 0.2
+                    }
+                });
+
+                tl.to(axle, { opacity: 1, duration: 0.1, ease: "none" });
+
+                tl.to(wheelProxy, {
+                    rotation: (Math.PI * 1.5) - totalRotationSpan,
+                    duration: 1,
+                    ease: "none",
+                    onUpdate: function () {
+                        tags.forEach((tag, i) => {
+                            const currentAngle = wheelProxy.rotation + (i * angleSpacing);
+
+                            const x = Math.cos(currentAngle) * radius;
+                            const y = Math.sin(currentAngle) * radius;
+
+                            const isLeftHalf = Math.cos(currentAngle) < 0.05;
+
+                            let tagOpacity = 0;
+                            if (isLeftHalf) {
+                                tagOpacity = Math.pow(Math.abs(Math.cos(currentAngle)), 1.8);
+                            }
+
+                            gsap.set(tag, {
+                                x: x,
+                                y: y,
+                                xPercent: 0,
+                                yPercent: -50,
+                                opacity: tagOpacity,
+                                zIndex: isLeftHalf ? 10 : -10
+                            });
+                        });
+                    }
+                }, 0);
+            }
+
+            initRotatingTitles();
+            initExpertiseWheel();
+
+            // =======================================================
+            // SERVICE CARDS VIDEO HOVER LOGIC
+            // =======================================================
+            const serviceCards = document.querySelectorAll('.process-block-card');
+
+            serviceCards.forEach(card => {
+                const video = card.querySelector('video');
+                if (!video) return;
+
+                let pauseTimeout;
+
+                card.addEventListener('mouseenter', () => {
+                    clearTimeout(pauseTimeout);
+                    video.play().catch(e => console.warn("Video autoplay blocked:", e));
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    // Wait for the CSS fade out transition (700ms) before pausing
+                    pauseTimeout = setTimeout(() => {
+                        video.pause();
+                    }, 700);
+                });
+
+                // Mobile fallback: pause/play on touch
+                card.addEventListener('touchstart', () => {
+                    clearTimeout(pauseTimeout);
+                    if (video.paused) {
+                        video.play().catch(e => console.warn("Video autoplay blocked:", e));
+                    } else {
+                        video.pause();
+                    }
+                }, { passive: true });
+            });
         });
     </script>
 </body>
