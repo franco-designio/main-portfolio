@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRANCO DESIGNIO — Human-Centered UX & Creative Technology</title>
+
+    <!-- Editorial Fonts: Instrument Serif & Instrument Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GSAP Core & Plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+
+    <!-- Matter.js (2D Physics Engine) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+
+    <!-- Three.js (3D WebGL Engine for ASCII Eye) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        :root {
+            /* High-contrast Black & White */
+            --bg: #0a0a0a;
+            --fg: #f8f8f8;
+        }
+
+        /* Core typographic and color enforcements - Editorial Reset */
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'Instrument Sans', sans-serif;
+            letter-spacing: -0.01em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            cursor: none;
+        }
+
+        ::selection {
+            background-color: var(--fg);
+            color: var(--bg);
+        }
+
+        /* Editorial Typography Scaling & Families */
+        .font-serif {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+        }
+
+        .text-display {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2.5rem, 6vw, 8.5rem);
+            line-height: 1;
+            font-weight: 400;
+        }
+
+        .text-huge {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(3rem, 10vw, 15rem);
+            line-height: 0.85;
+            font-weight: 400;
+        }
+
+        .text-body {
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: clamp(0.875rem, 1.25vw, 1.5rem);
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .text-meta {
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: clamp(0.7rem, 0.8vw, 1rem);
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* Custom Cursor */
+        #cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            background-color: #fff;
+            mix-blend-mode: difference;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        #cursor-dot.hovered {
+            width: 48px;
+            height: 48px;
+        }
+
+        /* Uncoated Paper Noise Texture */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Navigation specifics */
+        .nav-link {
+            position: relative;
+            display: inline-block;
+            text-decoration: none;
+            padding: 2px 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--fg);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .rotated-cta {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        /* Image Parallax Utilities */
+        .clip-reveal {
+            clip-path: inset(100% 0 0 0);
+            overflow: hidden;
+        }
+
+        .parallax-image {
+            transform: scale(1.2);
+            transform-origin: center;
+        }
+
+        /* Line Masking Utility for Text */
+        .line-mask {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .line-mask-inner {
+            display: inline-block;
+            transform: translateY(100%);
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html {
+            scrollbar-width: none;
+        }
+
+        /* ASCII Tracking Core Styles - Kept Monospace to preserve alignment */
+        #ascii-container {
+            white-space: pre;
+            transform-origin: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            letter-spacing: 0;
+            text-align: left;
+        }
+
+        .scanlines {
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0) 50%,
+                    rgba(0, 0, 0, 0.2) 50%,
+                    rgba(0, 0, 0, 0.2));
+            background-size: 100% 4px;
+        }
+
+        /* Mobile Touch Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            body {
+                cursor: auto;
+            }
+
+            #cursor-dot {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="w-full relative overflow-hidden">
+
+    <div class="noise-overlay"></div>
+    <div id="cursor-dot"></div>
+
+    <!-- ==========================================
+         SECTION 01: PRELOADER 
+         ========================================== -->
+    <div id="preloader"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--bg)] pointer-events-none">
+        <div class="text-[clamp(4rem,25vw,30vw)] leading-[0.8] w-full text-center overflow-hidden font-serif"
+            id="preload-row-1">XYZ89</div>
+        <div class="text-[clamp(4rem,25vw,30vw)] leading-[0.8] w-full text-center overflow-hidden font-serif"
+            id="preload-row-2">01ABC</div>
+        <div id="preloader-wipe" class="absolute top-full left-0 w-full h-full bg-[var(--fg)]"></div>
+    </div>
+
+    <!-- ==========================================
+         NAVIGATION (PERSISTENT ZONES)
+         ========================================== -->
+    <nav class="fixed top-6 left-6 z-40 flex flex-col gap-1 text-meta mix-blend-difference">
+        <a href="#about" class="nav-link w-max hover-target magnetic" data-strength="15">ABOUT</a>
+        <a href="#work" class="nav-link w-max hover-target magnetic" data-strength="15">WORK</a>
+        <a href="#process-pin-container" class="nav-link w-max hover-target magnetic" data-strength="15">PROCESS</a>
+        <a href="#principles" class="nav-link w-max hover-target magnetic" data-strength="15">PRINCIPLES</a>
+        <a href="#contact" class="nav-link w-max hover-target magnetic" data-strength="15">CONTACT</a>
+    </nav>
+
+    <div
+        class="fixed top-6 left-1/2 -translate-x-1/2 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap hover-target mix-blend-difference">
+        FRANC<span class="inline-block transform rotate-180">O</span> DESIGNIO
+    </div>
+
+    <!--FLOATING CONTACT PERSISTENT BUTTON-->
+    <a href="#contact" id="floating-contact-btn"
+        class="fixed bottom-12 right-6 z-40 flex items-center gap-4 group cursor-none text-meta hover-target magnetic mix-blend-difference"
+        data-strength="30">
+        <div class="rotated-cta tracking-widest">LET'S WORK</div>
+        <div
+            class="w-10 h-10 rounded-full border border-white flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:bg-white group-hover:text-black">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="5" x2="5" y2="19"></line>
+                <polyline points="19 19 5 19 5 5"></polyline>
+            </svg>
+        </div>
+    </a>
+
+    <!-- ==========================================
+         MAIN CONTENT WRAPPER
+         ========================================== -->
+    <main id="main-content">
+
+        <!-- ASCII Canvas Target (Fixed Overlay behind content) -->
+        <div class="fixed inset-0 flex items-center justify-center z-[15] overflow-hidden pointer-events-none"
+            id="ascii-wrapper">
+            <pre id="ascii-container" class="pointer-events-none will-change-transform m-0 p-0 block text-left"
+                style="color: var(--fg); opacity: 0;"></pre>
+        </div> <!-- ==========================================
+             SECTION 02: HERO (NEW SEQUENCE & ASCII EYE)
+             ========================================== -->
+        <section id="hero-ascii"
+            class="w-full h-[100svh] relative z-10 bg-transparent overflow-hidden flex flex-col items-center justify-center gap-16 md:justify-between pt-32 pb-24 md:pt-32 md:pb-32">
+
+            <!-- Top Phrase -->
+            <h1 id="intro-text-1"
+                class="text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference relative pointer-events-none">
+                Creation is <span class="italic">Divine</span>
+            </h1>
+
+
+
+            <div class="scanlines absolute inset-0 pointer-events-none z-20"></div>
+
+            <!-- Bottom Phrase -->
+            <h1 id="intro-text-2"
+                class="text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference relative pointer-events-none mb-4">
+                <span class="italic">Transformation</span> is Human
+            </h1>
+
+            <!-- New Scroll Phrase (Hidden Initially) -->
+            <h1 id="intro-text-3"
+                class="absolute inset-0 flex items-center justify-center text-display text-center w-full px-6 text-[var(--fg)] z-30 mix-blend-difference pointer-events-none opacity-0">
+                Design is the <span class="italic">Language</span>.
+            </h1>
+
+            <!-- Bottom scroll cue to be revealed after sequence -->
+            <div id="hero-footer-text"
+                class="flex flex-col md:flex-row justify-center md:justify-between w-full text-meta items-center md:items-end absolute bottom-6 md:bottom-8 left-0 px-6 z-30 opacity-0 pointer-events-none gap-2 md:gap-0">
+                <div class="hidden md:block w-1/3 text-left">DESIGN IN PRACTICE</div>
+                <div class="w-full md:w-1/3 text-center animate-pulse tracking-widest text-[0.6rem] md:text-meta">SCROLL
+                    TO VIEW MORE ↓</div>
+                <div class="hidden md:block w-1/3 text-right">©2026</div>
+            </div>
+
+        </section>
+
+        <!-- ==========================================
+             SECTION 03: ABOUT
+             ========================================== -->
+        <section id="about" class="w-full min-h-screen pt-32 pb-48 px-6 lg:px-12 relative z-20 bg-transparent">
+            <!-- <div class="flex justify-between w-full text-meta mb-24">
+                <div class="split-line">ZAPOPAN / GUADALAJARA, MX</div>
+                <div class="split-line">AVAILABLE</div>
+            </div> -->
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-48">
+                <div class="md:col-span-7">
+                    <h2 class="text-display max-w-4xl tracking-tight">
+                        <span class="block split-line">I don't just design</span>
+                        <span class="block split-line"><span class="italic">interfaces</span> — I design</span>
+                        <span class="block split-line">how people think</span>
+                        <span class="block split-line">through them.</span>
+                    </h2>
+                </div>
+                <div class="md:col-span-5 flex flex-col justify-end text-body pb-4">
+                    <div class="flex flex-col gap-1 w-full max-w-lg ml-auto cascade-text text-[var(--fg)]/80">
+                        <span style="margin-left: 0%;">I work at the intersection of</span>
+                        <span style="margin-left: 8%;">human behavior and digital form.</span>
+                        <span style="margin-left: 16%;">Every decision begins with how a real person</span>
+                        <span style="margin-left: 24%;">perceives, decides, and moves —</span>
+                        <span style="margin-left: 12%;">not with how a screen looks.</span>
+                        <br>
+                        <span style="margin-left: 4%;">Where cognitive load meets visual hierarchy.</span>
+                        <span style="margin-left: 18%;">Where friction becomes flow.</span>
+                        <span style="margin-left: 0%;">Where design stops being decoration</span>
+                        <span style="margin-left: 12%;">and starts being clarity.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typographic Sculpture -->
+            <div class="w-full flex flex-col gap-8 text-huge tracking-tight mt-32 sculpture-container">
+                <div class="flex flex-wrap gap-x-6 md:gap-x-12 gap-y-0 overflow-hidden">
+                    <span class="sculpture-word block origin-bottom-left">Designed</span>
+                    <span class="sculpture-word block origin-bottom-left">for</span>
+                    <span class="sculpture-word block origin-bottom-left italic font-serif">humans</span>
+                    <span class="sculpture-word block origin-bottom-left">who</span>
+                    <span class="sculpture-word block origin-bottom-left italic font-serif">feel.</span>
+                </div>
+                <div class="flex flex-wrap gap-x-6 md:gap-x-12 gap-y-0 overflow-hidden justify-end mt-12 md:mt-24">
+                    <span class="sculpture-word block origin-bottom-left italic font-serif">Not</span>
+                    <span class="sculpture-word block origin-bottom-left">just</span>
+                    <span class="sculpture-word block origin-bottom-left">users.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 04: PROCESS (HORIZONTAL SCROLL)
+             ========================================== -->
+        <section id="process-pin-container"
+            class="w-full h-screen relative z-20 bg-transparent border-t border-[var(--fg)]/20 overflow-hidden flex flex-col justify-center">
+
+            <!-- Fixed Header overlay during pin -->
+            <div
+                class="absolute top-12 left-6 lg:left-12 right-6 lg:right-12 flex justify-between items-start z-10 pointer-events-none">
+                <h2 class="text-display w-full md:w-1/2 line-mask">
+                    <span class="line-mask-inner process-header-reveal">How it works —<br><span
+                            class="italic font-serif">together</span></span>
+                </h2>
+                <div
+                    class="text-meta hidden md:block border border-[var(--fg)]/30 rounded-full px-4 py-1 pointer-events-auto hover-target bg-[var(--bg)]">
+                    PHASE <span id="process-counter">01</span>-03
+                </div>
+            </div>
+
+            <!-- The horizontally sliding track -->
+            <div class="process-slider flex gap-6 px-6 lg:px-12 w-[max-content] items-center mt-24">
+
+                <!-- Card 01 -->
+                <div
+                    class="process-block-card w-[85vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 p-8 lg:p-12 flex flex-col justify-between bg-[var(--bg)] hover-target">
+                    <div>
+                        <span class="p-num text-body">(01)</span>
+                        <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4">UX Research<br>& <span
+                                class="italic font-serif">Strategy</span></h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                        <ul class="flex flex-col gap-2 text-meta text-[var(--fg)]/60">
+                            <li>→ HEURISTIC EVALUATION</li>
+                            <li>→ USER FLOWS & MAPPING</li>
+                            <li>→ COGNITIVE LOAD ANALYSIS</li>
+                            <li>→ MENTAL MODEL RESEARCH</li>
+                            <li>→ USABILITY TESTING</li>
+                        </ul>
+                        <div class="text-body leading-relaxed pt-2 hidden md:block p-desc text-[var(--fg)]/80">
+                            Clarity is a radical act. I dive into how people actually think — not how we assume they do.
+                            From behavior to structure, I build the foundation for interfaces that feel inevitable.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 02 -->
+                <div
+                    class="process-block-card w-[85vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 p-8 lg:p-12 flex flex-col justify-between bg-[var(--bg)] hover-target">
+                    <div>
+                        <span class="p-num text-body">(02)</span>
+                        <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4">Interface<br><span
+                                class="italic font-serif">Design</span></h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                        <ul class="flex flex-col gap-2 text-meta text-[var(--fg)]/60">
+                            <li>→ INTERACTION PATTERNS</li>
+                            <li>→ COMPONENT SYSTEMS</li>
+                            <li>→ VISUAL HIERARCHY</li>
+                            <li>→ MOTION PRINCIPLES</li>
+                            <li>→ ACCESSIBILITY-FIRST</li>
+                        </ul>
+                        <div class="text-body leading-relaxed pt-2 hidden md:block p-desc text-[var(--fg)]/80">
+                            In a world of noise, your interface should speak with precision. I craft visual systems that
+                            are intentional and built to carry meaning — not just style.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 03 -->
+                <div
+                    class="process-block-card w-[85vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 p-8 lg:p-12 flex flex-col justify-between bg-[var(--bg)] hover-target">
+                    <div>
+                        <span class="p-num text-body">(03)</span>
+                        <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4">Creative Tech<br>& <span
+                                class="italic font-serif">Implementation</span></h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                        <ul class="flex flex-col gap-2 text-meta text-[var(--fg)]/60">
+                            <li>→ HTML / CSS / JS</li>
+                            <li>→ GSAP MICROINTERACTIONS</li>
+                            <li>→ PERFORMANCE-FIRST</li>
+                            <li>→ WEBGL & CANVAS</li>
+                            <li>→ NUXT / VUE / REACT</li>
+                        </ul>
+                        <div class="text-body leading-relaxed pt-2 hidden md:block p-desc text-[var(--fg)]/80">
+                            The build is part of the design. I don't hand off and disappear — I stay in the code until
+                            the interaction feels exactly the way it was designed to.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             SECTION 05: WORK
+             ========================================== -->
+        <section id="work" class="w-full py-32 relative z-20 bg-[var(--bg)] border-t border-[var(--fg)]/20">
+            <div class="px-6 lg:px-12 w-full mx-auto mb-20 flex justify-between items-end">
+                <h2 class="text-display split-line">Selected <span class="italic font-serif">Work</span> <span
+                        class="text-[var(--fg)]/40 text-body font-sans italic ml-4">(5)</span></h2>
+            </div>
+
+            <div class="relative border-t border-[var(--fg)]/20 work-list-container">
+                <!-- Project Items -->
+                <a href="#"
+                    class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item"
+                    data-img="https://images.unsplash.com/photo-1579566346927-c68383817a25?q=80&w=1000&auto=format&fit=crop">
+                    <div
+                        class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
+                        <h3
+                            class="font-serif text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out group-hover:italic">
+                            Organ-on-Chip Medical Device</h3>
+                        <div
+                            class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                            <span class="text-meta">HARDWARE UX</span>
+                            <span class="text-meta">2025</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#"
+                    class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item"
+                    data-img="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop">
+                    <div
+                        class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
+                        <h3
+                            class="font-serif text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out group-hover:italic">
+                            Internal Creative AI Tools</h3>
+                        <div
+                            class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                            <span class="text-meta">VISUAL IDEATION</span>
+                            <span class="text-meta">2024</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#"
+                    class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item"
+                    data-img="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop">
+                    <div
+                        class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
+                        <h3
+                            class="font-serif text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out group-hover:italic">
+                            Regulated Digital Products</h3>
+                        <div
+                            class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                            <span class="text-meta">COMPLIANCE SYSTEMS</span>
+                            <span class="text-meta">2024</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             FOOTER
+             ========================================== -->
+        <footer id="contact"
+            class="w-full min-h-[90vh] flex flex-col items-center justify-center bg-[var(--fg)] text-[var(--bg)] relative overflow-hidden z-20 pt-24 pb-12">
+
+            <!-- Matter.js Physics Container -->
+            <div id="physics-container" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></div>
+
+            <!-- Original layout container to measure the perfect starting positions -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none px-6 z-10 transition-opacity duration-300"
+                id="measurement-container">
+                <h2 id="footer-massive-text"
+                    class="text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center w-full select-none text-[var(--bg)]">
+                    <!-- Javascript will populate this to measure exactly -->
+                </h2>
+            </div>
+
+            <div
+                class="relative z-10 flex flex-col md:flex-row justify-between w-full px-6 lg:px-12 mt-auto text-meta pointer-events-none">
+                <div class="flex flex-col gap-2 pointer-events-auto text-[var(--bg)]/70">
+                    <a href="mailto:designiofranco@gmail.com"
+                        class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">DESIGN@FRANCODESIGNIO.COM</a>
+                    <span>+52 33 0000 0000</span>
+                </div>
+                <div class="flex gap-8 mt-8 md:mt-0 pointer-events-auto text-[var(--bg)]/70">
+                    <a href="#"
+                        class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">LINKEDIN</a>
+                    <a href="#" class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">GITHUB</a>
+                    <a href="#" class="hover:underline hover:text-[var(--bg)] hover-target transition-colors">READ
+                        CV</a>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- ==========================================
+         SCRIPTS / ANIMATION LOGIC
+         ========================================== -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ==========================================
+        // PREVENT SCROLL RESTORATION & INITIALIZE LENIS
+        // ==========================================
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        // Initialize Lenis for smooth scrolling
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        // Force lenis to stop intercepting/allowing scroll early
+        lenis.stop();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+
+        // Force scroll to top instantly before layout calculates and animations trigger
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Backup scroll enforcing after DOM paint
+            window.scrollTo(0, 0);
+
+            // =======================================================
+            // TOUCH DETECTION & CUSTOM CURSOR LOGIC
+            // =======================================================
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+
+            // Mouse variables needed for both custom cursor and ASCII Eye
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+
+            window.addEventListener("mousemove", (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+            });
+
+            if (!isTouchDevice) {
+                const cursor = document.getElementById("cursor-dot");
+                let cursorX = mouseX, cursorY = mouseY;
+
+                function lerp(start, end, factor) { return start + (end - start) * factor; }
+                function updateCursor() {
+                    cursorX = lerp(cursorX, mouseX, 0.15);
+                    cursorY = lerp(cursorY, mouseY, 0.15);
+                    cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+                    requestAnimationFrame(updateCursor);
+                }
+                updateCursor();
+
+                document.querySelectorAll('.hover-target').forEach(el => {
+                    el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                    el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                });
+
+                document.querySelectorAll('.magnetic').forEach(btn => {
+                    const strength = btn.dataset.strength ? parseFloat(btn.dataset.strength) : 20;
+                    btn.addEventListener('mousemove', (e) => {
+                        const rect = btn.getBoundingClientRect();
+                        const centerX = rect.left + rect.width / 2;
+                        const centerY = rect.top + rect.height / 2;
+                        gsap.to(btn, { x: (e.clientX - centerX) / rect.width * strength, y: (e.clientY - centerY) / rect.height * strength, duration: 0.6, ease: "power3.out" });
+                    });
+                    btn.addEventListener('mouseleave', () => gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.3)" }));
+                });
+            } else {
+                // Ensure the exact DOM element is hidden logically just in case CSS doesn't fire
+                document.getElementById("cursor-dot").style.display = "none";
+            }
+
+            // =======================================================
+            // THREE.JS ASCII EYE FEATURE
+            // =======================================================
+            function initAsciiEye() {
+                const ASCII_CHARS = "  .-:=+*%#@";
+                const bayerMatrix = [
+                    [0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]
+                ];
+                const asciiContainer = document.getElementById('ascii-container');
+
+                let pixelBuffer;
+                let columns, rows;
+                let blinkTimer = 0;
+                let renderTarget;
+
+                const scene = new THREE.Scene();
+                // Match the aesthetic
+                scene.background = new THREE.Color(0x0a0a0a);
+
+                const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.z = 12;
+
+                const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false });
+                renderer.setPixelRatio(1);
+
+                const eyeGroup = new THREE.Group();
+
+                // Sclera
+                const scleraGeo = new THREE.SphereGeometry(2.5, 32, 32);
+                const scleraMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+                const sclera = new THREE.Mesh(scleraGeo, scleraMat);
+                eyeGroup.add(sclera);
+
+                // Iris
+                const irisGeo = new THREE.SphereGeometry(1.2, 32, 16);
+                const irisMat = new THREE.MeshLambertMaterial({ color: 0x444444 });
+                const iris = new THREE.Mesh(irisGeo, irisMat);
+                iris.position.z = 2.25;
+                iris.scale.z = 0.2;
+                eyeGroup.add(iris);
+
+                // Pupil
+                const pupilGeo = new THREE.SphereGeometry(0.5, 32, 16);
+                const pupilMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const pupil = new THREE.Mesh(pupilGeo, pupilMat);
+                pupil.position.z = 2.45;
+                pupil.scale.z = 0.1;
+                eyeGroup.add(pupil);
+
+                // Cornea Highlight
+                const corneaGeo = new THREE.SphereGeometry(2.55, 32, 32);
+                const corneaMat = new THREE.MeshPhongMaterial({
+                    color: 0xffffff, specular: 0xffffff, shininess: 400,
+                    transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending
+                });
+                const cornea = new THREE.Mesh(corneaGeo, corneaMat);
+                eyeGroup.add(cornea);
+
+                scene.add(eyeGroup);
+
+                // Lights
+                scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+                const mainLight = new THREE.DirectionalLight(0xffffff, 1.8);
+                mainLight.position.set(5, 8, 10);
+                scene.add(mainLight);
+                const rimLight = new THREE.PointLight(0xffffff, 0.6, 50);
+                rimLight.position.set(-8, -8, -5);
+                scene.add(rimLight);
+
+                function resizeEye() {
+                    const fontSize = 16;
+                    const charWidth = fontSize * 0.6;
+                    const charHeight = fontSize;
+
+                    // Fallback to guarantee dimensions aren't zero, fixing the "Framebuffer not complete" error
+                    const w = window.innerWidth || 1024;
+                    const h = window.innerHeight || 768;
+
+                    columns = Math.max(1, Math.ceil(w / charWidth));
+                    rows = Math.max(1, Math.ceil(h / charHeight));
+
+                    asciiContainer.style.fontSize = fontSize + 'px';
+                    asciiContainer.style.lineHeight = charHeight + 'px';
+
+                    asciiContainer.style.width = (columns * charWidth) + 'px';
+                    asciiContainer.style.height = (rows * charHeight) + 'px';
+
+                    camera.aspect = w / h;
+                    camera.updateProjectionMatrix();
+
+                    if (renderTarget) renderTarget.dispose();
+                    renderTarget = new THREE.WebGLRenderTarget(columns, rows, {
+                        minFilter: THREE.NearestFilter,
+                        magFilter: THREE.NearestFilter,
+                        format: THREE.RGBAFormat,
+                        type: THREE.UnsignedByteType // Explicit type ensures framebuffer compatibility
+                    });
+
+                    renderer.setSize(columns, rows);
+                    pixelBuffer = new Uint8Array(columns * rows * 4);
+                }
+                window.addEventListener('resize', resizeEye);
+                resizeEye();
+
+                let lastFrameTime = 0;
+                const fpsLimit = 30; // 30 FPS halves the processing load without visible quality loss for ASCII
+                const frameInterval = 1000 / fpsLimit;
+
+                function animateEye(time) {
+                    requestAnimationFrame(animateEye);
+
+                    // Stop execution if renderTarget isn't successfully created
+                    if (!renderTarget || columns < 1 || rows < 1) return;
+
+                    let targetX, targetY;
+
+                    if (isTouchDevice) {
+                        // Gentle idle panning for mobile devices
+                        targetX = Math.sin(Date.now() * 0.001) * 0.3;
+                        targetY = Math.cos(Date.now() * 0.0013) * 0.3;
+                    } else {
+                        // Precise mouse tracking for desktop
+                        targetX = (mouseX / window.innerWidth) * 2 - 1;
+                        targetY = -(mouseY / window.innerHeight) * 2 + 1;
+                    }
+
+                    const targetRotY = targetX * (Math.PI / 3);
+                    const targetRotX = -targetY * (Math.PI / 3);
+
+                    eyeGroup.rotation.y += (targetRotY - eyeGroup.rotation.y) * 0.1;
+                    eyeGroup.rotation.x += (targetRotX - eyeGroup.rotation.x) * 0.1;
+                    eyeGroup.position.y = Math.sin(Date.now() * 0.0015) * 0.3;
+
+                    blinkTimer++;
+                    if (blinkTimer > 180) {
+                        if (Math.random() > 0.8) {
+                            eyeGroup.scale.y = 0.05;
+                            setTimeout(() => eyeGroup.scale.y = 1, 120);
+                        }
+                        blinkTimer = 0;
+                    }
+
+                    // Throttle the heavy pixel reading and string concatenation to 30 FPS
+                    if (time - lastFrameTime >= frameInterval) {
+                        lastFrameTime = time;
+
+                        try {
+                            renderer.setRenderTarget(renderTarget);
+                            renderer.render(scene, camera);
+                            renderer.readRenderTargetPixels(renderTarget, 0, 0, columns, rows, pixelBuffer);
+
+                            const chars = new Array(rows * (columns + 1));
+                            let ptr = 0;
+                            let pixelIndex = 0;
+
+                            for (let y = rows - 1; y >= 0; y--) {
+                                // Calculate starting pixel index for this row since we are iterating top-down in text but bottom-up in WebGL buffer
+                                pixelIndex = y * columns * 4;
+                                for (let x = 0; x < columns; x++) {
+                                    const r = pixelBuffer[pixelIndex++];
+                                    const g = pixelBuffer[pixelIndex++];
+                                    const b = pixelBuffer[pixelIndex++];
+                                    pixelIndex++; // skip alpha
+
+                                    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                                    const bayerValue = (bayerMatrix[y % 4][x % 4] / 16.0) - 0.5;
+                                    const finalLum = Math.max(0, Math.min(255, lum + bayerValue * 64));
+                                    const charIndex = Math.floor((finalLum / 255) * (ASCII_CHARS.length - 1));
+                                    chars[ptr++] = ASCII_CHARS[charIndex];
+                                }
+                                chars[ptr++] = '\n';
+                            }
+                            asciiContainer.textContent = chars.join('');
+                        } catch (err) {
+                            // Silent catch to prevent console flooding if framebuffer is temporarily incomplete
+                        }
+                    }
+                }
+                animateEye();
+            }
+
+            initAsciiEye();
+
+            // Initialize all scroll animations BEFORE the preloader fades out to prevent DOM reflow jumps
+            initScrollAnimations();
+
+            // =======================================================
+            // PRELOADER & INTRO SEQUENCE TIMELINE
+            // =======================================================
+            const charsArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const row1 = document.getElementById("preload-row-1");
+            const row2 = document.getElementById("preload-row-2");
+            let intervalCount = 0;
+
+            gsap.set("#intro-text-1", { opacity: 0, y: 30 });
+            gsap.set("#intro-text-2", { opacity: 0, y: -30 });
+            gsap.set("#ascii-container", { scale: 1.5, opacity: 0 });
+            gsap.set("#hero-footer-text", { opacity: 0 });
+            gsap.set("#main-content", { opacity: 0 }); // Start hidden via GSAP so it can be animated back
+
+            const scrambleInterval = setInterval(() => {
+                row1.innerText = Array(5).fill(0).map(() => charsArray[Math.floor(Math.random() * charsArray.length)]).join('');
+                row2.innerText = Array(5).fill(0).map(() => charsArray[Math.floor(Math.random() * charsArray.length)]).join('');
+                intervalCount++;
+
+                if (intervalCount >= 40) {
+                    clearInterval(scrambleInterval);
+                    const tl = gsap.timeline({
+                        onComplete: () => {
+                            document.getElementById('preloader').style.display = 'none';
+                            document.body.classList.remove("overflow-hidden"); // Remove native scroll lock
+                            ScrollTrigger.refresh();
+                            lenis.start(); // Unlock Lenis
+                        }
+                    });
+
+                    tl.to([row1, row2], { opacity: 0, duration: 0.2 })
+                        .to("#preloader-wipe", { top: "0%", duration: 0.6, ease: "expo.inOut" }, "-=0.1")
+                        .to("#main-content", { opacity: 1, duration: 0.1 }, "-=0.2") // Re-added this line so content fades in
+                        .to("#preloader", { yPercent: -100, duration: 0.8, ease: "expo.inOut" })
+
+                        // Sped up hero fade-in by reducing duration and starting them while the preloader finishes sliding up
+                        .to("#intro-text-1", { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }, "-=0.6")
+                        .to("#intro-text-2", { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }, "-=0.4")
+                        .to("#ascii-container", { scale: 1, opacity: 1, duration: 2, ease: "expo.out" }, "-=0.4")
+                        .to("#hero-footer-text", { opacity: 1, duration: 1.0, ease: "power2.out" }, "-=1.0");
+                }
+            }, 35);
+
+
+            // =======================================================
+            // SCROLL ANIMATIONS (Triggered after Intro Ends)
+            // =======================================================
+            function initScrollAnimations() {
+
+                // ==========================================
+                // HERO PINNED SCROLL SEQUENCE
+                // ==========================================
+                gsap.set("#intro-text-3", { opacity: 1, y: 0 }); // Reveal container
+
+                const splitNode = (selector, baseClass) => {
+                    const el = document.querySelector(selector);
+                    if (!el) return [];
+                    const processNode = (node) => {
+                        if (node.nodeType === 3) {
+                            const chars = node.nodeValue.split('');
+                            const frag = document.createDocumentFragment();
+                            chars.forEach(c => {
+                                const span = document.createElement('span');
+                                span.className = baseClass + ' inline-block whitespace-pre';
+                                span.innerText = c;
+                                if (c.trim() !== "") span.dataset.o = c;
+                                frag.appendChild(span);
+                            });
+                            node.parentNode.replaceChild(frag, node);
+                        } else if (node.nodeType === 1 && !node.classList.contains(baseClass)) {
+                            Array.from(node.childNodes).forEach(processNode);
+                        }
+                    };
+                    Array.from(el.childNodes).forEach(processNode);
+                    return gsap.utils.toArray(`${selector} .${baseClass}`);
+                };
+
+                const outChars = [...splitNode("#intro-text-1", "out-char"), ...splitNode("#intro-text-2", "out-char")];
+                const inChars = splitNode("#intro-text-3", "in-char");
+
+                gsap.set(inChars, { opacity: 0 });
+
+                let heroScrollTl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: "#hero-ascii",
+                        start: "top top",
+                        end: "+=300%", // Extended runway for reading and final glitch out
+                        pin: true,
+                        scrub: true,
+                    }
+                });
+
+                const scrambleStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*&%!";
+                const outDummy = { p: 0 };
+                const inDummy = { p: 0 };
+
+                heroScrollTl
+                    // PHASE 1: Glitch out phrases 1 & 2
+                    .to(outDummy, {
+                        p: 1,
+                        duration: 1,
+                        ease: "none",
+                        onUpdate: () => {
+                            const progress = outDummy.p;
+                            outChars.forEach((span, i) => {
+                                const charThreshold = (i / outChars.length) * 0.7;
+                                let charP = (progress - charThreshold) / 0.3;
+                                charP = Math.max(0, Math.min(1, charP));
+
+                                if (span.dataset.o) {
+                                    if (charP > 0 && charP < 1) {
+                                        if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
+                                        span.style.opacity = 1 - charP;
+                                    } else if (charP >= 1) {
+                                        span.style.opacity = 0;
+                                        span.innerText = span.dataset.o;
+                                    } else {
+                                        span.style.opacity = 1;
+                                        span.innerText = span.dataset.o;
+                                    }
+                                } else {
+                                    span.style.opacity = 1 - charP;
+                                }
+                            });
+                        }
+                    }, 0)
+                    // PHASE 2: Type in phrase 3 (overlaps end of Phase 1)
+                    .to(inChars, {
+                        opacity: 1,
+                        stagger: 0.02,
+                        duration: 0.2, // Small duration since scrub applies it over scroll distance
+                        ease: "none"
+                    }, 0.5)
+                    .to("#hero-footer-text", { opacity: 0, duration: 0.5 }, 0)
+
+                    // PHASE 3: Reading Pause (Timeline just advances empty space from 1.0 to 2.0)
+                    .to({}, { duration: 1 }, 1)
+
+                    // PHASE 4: Glitch out phrase 3
+                    .to(inDummy, {
+                        p: 1,
+                        duration: 1,
+                        ease: "none",
+                        onUpdate: () => {
+                            const progress = inDummy.p;
+                            inChars.forEach((span, i) => {
+                                const charThreshold = (i / inChars.length) * 0.7;
+                                let charP = (progress - charThreshold) / 0.3;
+                                charP = Math.max(0, Math.min(1, charP));
+
+                                if (span.dataset.o) {
+                                    if (charP > 0 && charP < 1) {
+                                        if (Math.floor(charP * 20) % 2 === 0) span.innerText = scrambleStr[Math.floor(Math.random() * scrambleStr.length)];
+                                        span.style.opacity = 1 - charP;
+                                    } else if (charP >= 1) {
+                                        span.style.opacity = 0;
+                                    } else {
+                                        // Don't force opacity to 1 here, let the staggered "typing" animation control the initial 1 state
+                                        span.innerText = span.dataset.o;
+                                    }
+                                } else {
+                                    span.style.opacity = 1 - charP;
+                                }
+                            });
+                        }
+                    }, 2);
+
+
+                document.querySelectorAll('.split-line').forEach(el => {
+                    const text = el.innerText;
+                    el.innerHTML = `<span class="line-mask"><span class="line-mask-inner block">${text}</span></span>`;
+                    gsap.to(el.querySelector('.line-mask-inner'), {
+                        y: "0%", duration: 1.2, ease: "expo.out",
+                        scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" }
+                    });
+                });
+
+                gsap.utils.toArray('.cascade-text span').forEach((span, i) => {
+                    gsap.fromTo(span, { opacity: 0, x: -15 }, {
+                        opacity: 1, x: 0, duration: 1, ease: "power3.out",
+                        scrollTrigger: { trigger: ".cascade-text", start: "top 80%", toggleActions: "play none none reverse" }, delay: i * 0.05
+                    });
+                });
+
+                gsap.utils.toArray('.sculpture-word').forEach((word, i) => {
+                    gsap.fromTo(word, { opacity: 0, yPercent: 120, rotateZ: 2 }, {
+                        opacity: 1, yPercent: 0, rotateZ: 0, duration: 1.2, ease: "expo.out",
+                        scrollTrigger: { trigger: word, start: "top 90%", toggleActions: "play none none reverse" }, delay: (i % 3) * 0.05
+                    });
+                });
+
+                // ==========================================
+                // HIDE FLOATING CONTACT BUTTON ON FOOTER
+                // ==========================================
+                gsap.to("#floating-contact-btn", {
+                    opacity: 0,
+                    pointerEvents: "none",
+                    duration: 0.3,
+                    scrollTrigger: {
+                        trigger: "#contact",
+                        start: "top 85%", // Starts fading just as the black footer begins pushing up the bottom of the screen
+                        end: "top 70%",   // Quickly fully hidden as the footer takes up more space
+                        scrub: true
+                    }
+                });
+
+                // ==========================================
+                // HORIZONTAL SCROLL FOR PROCESS SECTION
+                // ==========================================
+                const processPin = document.querySelector('#process-pin-container');
+                const processSlider = document.querySelector('.process-slider');
+                const processCards = gsap.utils.toArray('.process-block-card');
+
+                if (processPin && processSlider && processCards.length) {
+
+                    // Animate Header Reveal inside the pin
+                    gsap.to('.process-header-reveal', {
+                        y: "0%",
+                        duration: 1.2,
+                        ease: "expo.out",
+                        scrollTrigger: { trigger: processPin, start: "top 80%", toggleActions: "play none none reverse" }
+                    });
+
+                    // Sliding eye up to "peek" just as Process section enters viewport
+                    gsap.to("#ascii-wrapper", {
+                        yPercent: -50,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: processPin,
+                            start: "top bottom",
+                            end: "top top",
+                            scrub: true
+                        }
+                    });
+
+                    // HORIZONTAL SCROLL PIN (Defined before eye exit so it properly accounts for the added pin spacing)
+                    let getScrollAmount = () => -(processSlider.scrollWidth - window.innerWidth + 100);
+
+                    gsap.to(processSlider, {
+                        x: getScrollAmount,
+                        ease: "none", // Must be none for 1:1 scrubbed scrolling
+                        scrollTrigger: {
+                            trigger: processPin,
+                            start: "top top",
+                            end: () => `+=${processSlider.scrollWidth - window.innerWidth}`,
+                            pin: true,
+                            scrub: true,
+                            invalidateOnRefresh: true,
+                            onUpdate: (self) => {
+                                let totalCards = processCards.length;
+                                let currentIdx = Math.floor(self.progress * totalCards);
+                                let phase = Math.min(currentIdx, totalCards - 1) + 1;
+                                document.getElementById('process-counter').innerText = "0" + phase;
+                            }
+                        }
+                    });
+
+                    // Eye perfectly static during horizontal scroll because it's fixed and we do nothing here...
+
+                    // Exit eye completely off-screen AFTER Process section unpins and user scrolls to footer
+                    // By pinning the exit trigger to #contact (the next section), GSAP automatically inherits the entire
+                    // horizontal pin spacing delay. It will not fire a single pixel until the horizontal scroll finishes.
+                    gsap.to("#ascii-wrapper", {
+                        yPercent: -150, // Move it way off screen
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: "#contact", // Next element in the DOM
+                            start: "top bottom", // Trigger exactly when horizontal scrolling ends and footer begins revealing
+                            end: "top top",      // End exactly when the footer reaches the top of the monitor
+                            scrub: true
+                        }
+                    });
+
+                }
+
+
+                const workItems = document.querySelectorAll('.work-list-item');
+                workItems.forEach(item => {
+                    gsap.fromTo(item,
+                        { opacity: 0, y: 30 },
+                        { opacity: 1, y: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" } }
+                    );
+                });
+
+                // -----------------------------------------------------
+                // MATTER.JS FOOTER PHYSICS 
+                // -----------------------------------------------------
+                const container = document.getElementById('physics-container');
+                let engine = Matter.Engine.create();
+                let world = engine.world;
+                let physicsInitialized = false;
+                let runner = null;
+
+                function resetPhysics() {
+                    if (runner) Matter.Runner.stop(runner);
+                    Matter.World.clear(world);
+                    Matter.Engine.clear(engine);
+                    container.innerHTML = ''; // Remove all cloned physical letters
+                    document.getElementById('measurement-container').style.opacity = '1'; // Show measurement container again for text plotting
+                    physicsInitialized = false;
+                }
+
+                function initPhysics() {
+                    if (physicsInitialized) return;
+                    physicsInitialized = true;
+
+                    const width = container.clientWidth;
+                    const height = container.clientHeight;
+                    const containerRect = container.getBoundingClientRect();
+
+                    const thickness = 100;
+                    const ground = Matter.Bodies.rectangle(width / 2, height - 150 + thickness / 2, width * 2, thickness, { isStatic: true });
+                    const leftWall = Matter.Bodies.rectangle(-thickness / 2, height / 2, thickness, height * 3, { isStatic: true });
+                    const rightWall = Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height * 3, { isStatic: true });
+                    Matter.World.add(world, [ground, leftWall, rightWall]);
+
+                    const h2 = document.getElementById('footer-massive-text');
+                    h2.innerHTML = '';
+
+                    const words = ["LET'S", "CREATE", "SOMETHING"];
+                    const measuredSpans = [];
+
+                    words.forEach((word, wIdx) => {
+                        word.split('').forEach((char) => {
+                            const span = document.createElement('span');
+                            span.style.display = 'inline-block';
+                            span.innerText = char;
+                            h2.appendChild(span);
+                            measuredSpans.push({ char, span });
+                        });
+                        // Add line breaks between words so they stack properly in the DOM before calculating coordinates
+                        if (wIdx < words.length - 1) {
+                            h2.appendChild(document.createElement('br'));
+                        }
+                    });
+
+                    const letters = [];
+
+                    measuredSpans.forEach((item) => {
+                        const rect = item.span.getBoundingClientRect();
+
+                        const x = rect.left - containerRect.left + rect.width / 2;
+                        const y = rect.top - containerRect.top + rect.height / 2;
+
+                        const clone = document.createElement('div');
+                        clone.className = "absolute text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center select-none text-[var(--bg)] pointer-events-none";
+                        clone.innerText = item.char;
+
+                        clone.style.left = `${x}px`;
+                        clone.style.top = `${y}px`;
+                        clone.style.transform = `translate(-50%, -50%)`;
+                        container.appendChild(clone);
+
+                        const bodyWidth = rect.width * 0.65; // Increased width and height logic to give letters more physical breathing room
+                        const bodyHeight = rect.height * 0.85;
+
+                        const body = Matter.Bodies.rectangle(x, y, bodyWidth, bodyHeight, {
+                            restitution: 0.3, // Slightly bouncier so they scatter more
+                            friction: 0.8,
+                            density: 0.05,
+                            isStatic: true // Removed chamfer for squarer, cleaner stacking
+                        });
+
+                        letters.push({ element: clone, body: body });
+                        Matter.World.add(world, body);
+                    });
+
+                    document.getElementById('measurement-container').style.opacity = '0';
+
+                    setTimeout(() => {
+                        letters.forEach(item => {
+                            Matter.Body.setStatic(item.body, false);
+                            Matter.Body.setVelocity(item.body, {
+                                x: (Math.random() - 0.5) * 4,
+                                y: (Math.random() - 0.5) * 4
+                            });
+                            Matter.Body.setAngularVelocity(item.body, (Math.random() - 0.5) * 0.15);
+                        });
+                    }, 2200);
+
+                    const mouse = Matter.Mouse.create(container);
+                    const mouseConstraint = Matter.MouseConstraint.create(engine, {
+                        mouse: mouse,
+                        constraint: {
+                            stiffness: 0.2,
+                            render: { visible: false }
+                        }
+                    });
+                    Matter.World.add(world, mouseConstraint);
+
+                    const cursorDot = document.getElementById('cursor-dot');
+                    Matter.Events.on(mouseConstraint, 'mousedown', function () {
+                        if (mouseConstraint.body) cursorDot.classList.add('hovered');
+                    });
+                    Matter.Events.on(mouseConstraint, 'mouseup', function () {
+                        cursorDot.classList.remove('hovered');
+                    });
+
+                    Matter.Events.on(engine, 'afterUpdate', function () {
+                        letters.forEach((item) => {
+                            item.element.style.left = `${item.body.position.x}px`;
+                            item.element.style.top = `${item.body.position.y}px`;
+                            item.element.style.transform = `translate(-50%, -50%) rotate(${item.body.angle}rad)`;
+                        });
+                    });
+
+                    runner = Matter.Runner.create();
+                    Matter.Runner.run(runner, engine);
+
+                    window.addEventListener('resize', () => {
+                        const newWidth = container.clientWidth;
+                        const newHeight = container.clientHeight;
+                        Matter.Body.setPosition(ground, { x: newWidth / 2, y: newHeight - 150 + thickness / 2 });
+                        Matter.Body.setPosition(rightWall, { x: newWidth + thickness / 2, y: newHeight / 2 });
+                    });
+                }
+
+                ScrollTrigger.create({
+                    trigger: "#contact",
+                    start: "top 60%",
+                    onEnter: () => {
+                        resetPhysics();
+                        initPhysics();
+                    },
+                    onLeaveBack: () => {
+                        resetPhysics(); // Reset when scrolled completely out of view upwards
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
