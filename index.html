@@ -315,20 +315,27 @@
                 
                 <div class="absolute inset-0 pointer-events-none hidden md:block z-[15]">
                     
-                    <div class="hero-text-pure font-sans flex flex-col items-end interactive-phrase float-anim-1 absolute hover-target top-[35%] left-[18%]" data-shape="pawn">
-                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="TRANSFORMATION">TRANSFORMATION</span> 
-                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS HUMAN">IS HUMAN</span>
+                    <div data-speed="0.1" class="absolute top-[35%] left-[18%]">
+                        <div class="hero-text-pure font-sans flex flex-col items-end interactive-phrase float-anim-1 hover-target pointer-events-auto" data-shape="pawn">
+                            <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="TRANSFORMATION">TRANSFORMATION</span> 
+                            <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS HUMAN">IS HUMAN</span>
+                        </div>
                     </div>
                     
-                    <div class="hero-text-pure font-sans flex flex-col items-start interactive-phrase float-anim-2 absolute hover-target top-[50%] right-[15%]" data-shape="logo">
-                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mb-1 tracking-widest" data-original="DESIGN IS">DESIGN IS</span> 
-                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="THE LANGUAGE">THE LANGUAGE</span>
+                    <div data-speed="0.2" class="absolute top-[50%] right-[15%]">
+                        <div class="hero-text-pure font-sans flex flex-col items-start interactive-phrase float-anim-2 hover-target pointer-events-auto" data-shape="logo">
+                            <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mb-1 tracking-widest" data-original="DESIGN IS">DESIGN IS</span> 
+                            <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="THE LANGUAGE">THE LANGUAGE</span>
+                        </div>
                     </div>
                     
-                    <div class="hero-text-pure font-sans flex flex-col items-center interactive-phrase float-anim-3 absolute hover-target bottom-[12%] left-[43%]" data-shape="torus">
-                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="CREATION">CREATION</span> 
-                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS DIVINE">IS DIVINE</span>
+                    <div data-speed="0.05" class="absolute bottom-[12%] left-[43%]">
+                        <div class="hero-text-pure font-sans flex flex-col items-center interactive-phrase float-anim-3 hover-target pointer-events-auto" data-shape="torus">
+                            <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="CREATION">CREATION</span> 
+                            <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS DIVINE">IS DIVINE</span>
+                        </div>
                     </div>
+
                 </div>
 
                 <div class="absolute bottom-8 left-6 md:left-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
@@ -998,17 +1005,6 @@
 
                 Object.values(shapes).forEach(shape => shape.userData = { targetScale: 0, baseRotationY: 0 });
                 
-                // PERFORMANCE: Observer to stop drawing when scrolled past
-                let isAsciiVisible = true;
-                const asciiObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        isAsciiVisible = entry.isIntersecting;
-                    });
-                }, { threshold: 0 });
-                const processPin = document.getElementById('process-pin-container');
-                if (processPin) asciiObserver.observe(processPin);
-                const heroFore = document.getElementById('hero-foreground');
-                if (heroFore) asciiObserver.observe(heroFore);
                 shapes['eye'].userData.targetScale = 1;
 
                 window.switchShape = (target) => {
@@ -1087,8 +1083,6 @@
 
                 const animate = (timestamp) => {
                     animationFrameId = requestAnimationFrame(animate);
-                    
-                    if (!isAsciiVisible) return;
 
                     mouse.x += (mouse.tx - mouse.x) * 0.25;
                     mouse.y += (mouse.ty - mouse.y) * 0.25;
@@ -1097,8 +1091,14 @@
                     const tXNorm = (mouse.x / width) * 2 - 1;
                     const tYNorm = -(mouse.y / height) * 2 + 1;
 
-                    const scrollRatio = Math.max(0, Math.min(scrollY / height, 1));
-                    const scrollFade = Math.max(0, 1 - scrollRatio * 1.5);
+                    // Reduce the fade out scaling so it stays visibly exiting the top of the viewport
+                    const scrollRatio = Math.max(0, scrollY / height);
+                    const scrollFade = Math.max(0, 1 - scrollRatio * 0.5); 
+
+                    // World Space calculations for Camera
+                    const fov = camera.fov * (Math.PI / 180);
+                    const visibleHeightAtZ = 2 * Math.tan(fov / 2) * camera.position.z;
+                    const scrollOffsetWorld = (scrollY / height) * visibleHeightAtZ;
 
                     Object.values(shapes).forEach(obj => {
                         const ts = obj.userData.targetScale * scrollFade;
@@ -1111,7 +1111,9 @@
                         const tiltAmount = (obj === logoGroup) ? 0.2 : 0.8;
                         obj.rotation.y += ((tXNorm * tiltAmount + obj.userData.baseRotationY) - obj.rotation.y) * 0.25;
                         obj.rotation.x += (-tYNorm * tiltAmount - obj.rotation.x) * 0.25;
-                        obj.position.y = Math.sin(time * 1.5) * 0.2;
+                        
+                        // Add scrollY-based vertical offset to physically move it upward slower than the scroll
+                        obj.position.y = Math.sin(time * 1.5) * 0.2 + (scrollOffsetWorld * 0.65);
                     });
 
                     if (currentShape === 'eye') {
@@ -1345,6 +1347,22 @@
                     gsap.to(el.querySelector('.line-mask-inner'), {
                         y: "0%", duration: 1.2, ease: "expo.out",
                         scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" }
+                    });
+                });
+
+                // Parallax Floating Text Effect (Based on data-speed wrappers)
+                document.querySelectorAll('[data-speed]').forEach(el => {
+                    const speed = parseFloat(el.getAttribute('data-speed'));
+                    gsap.to(el, {
+                        y: () => -window.innerHeight * speed * 2,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: "#hero-foreground",
+                            start: "top top",
+                            end: "bottom top",
+                            scrub: true,
+                            invalidateOnRefresh: true
+                        }
                     });
                 });
 
@@ -1705,8 +1723,8 @@
                 const group4 = [
                     "Void Starer",
                     "Lousy Cook",
-                    "Ornament Apologist",
                     "Flow State Skeptic",
+                    "Digital Monk"
                 ];
 
                 const TITLE_DURATION = 3500;
