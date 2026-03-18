@@ -11,11 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
-    <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         :root {
@@ -87,8 +87,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 24px;
-            height: 24px;
+            width: 12px;
+            height: 12px;
             background-color: #fff;
             mix-blend-mode: difference;
             border-radius: 50%;
@@ -99,8 +99,8 @@
         }
 
         #cursor-dot.hovered {
-            width: 96px;
-            height: 96px;
+            width: 48px;
+            height: 48px;
         }
 
         /* Uncoated Paper Noise Texture */
@@ -221,6 +221,10 @@
             background-size: 100% 4px;
         }
 
+        .vignette {
+            background: radial-gradient(circle at center, transparent 30%, #0a0a0a 110%);
+        }
+
         /* Nuevas clases para el texto puro del Hero */
         .hero-text-pure {
             font-size: clamp(1.2rem, 2.5vw, 2.8rem);
@@ -295,7 +299,7 @@
         /FRANCODESIGNIO
     </div>
     <div class="fixed top-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap hover-target mix-blend-difference font-sans text-white">
-        HUMAN-CENTERED WEB DESIGN & CREATIVE TECHNOLOGY
+        OPEN TO REMOTE
     </div>
 
     <main id="main-content">
@@ -311,34 +315,27 @@
                 
                 <div class="absolute inset-0 pointer-events-none hidden md:block z-[15]">
                     
-                    <div data-speed="0.1" class="absolute top-[35%] left-[18%]">
-                        <div class="hero-text-pure font-sans flex flex-col items-end interactive-phrase float-anim-1 hover-target pointer-events-auto" data-shape="pawn">
-                            <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="TRANSFORMATION">TRANSFORMATION</span> 
-                            <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS HUMAN">IS HUMAN</span>
-                        </div>
+                    <div class="hero-text-pure font-sans flex flex-col items-end interactive-phrase float-anim-1 absolute hover-target top-[35%] left-[18%]" data-shape="pawn">
+                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="TRANSFORMATION">TRANSFORMATION</span> 
+                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS HUMAN">IS HUMAN</span>
                     </div>
                     
-                    <div data-speed="0.2" class="absolute top-[50%] right-[15%]">
-                        <div class="hero-text-pure font-sans flex flex-col items-start interactive-phrase float-anim-2 hover-target pointer-events-auto" data-shape="logo">
-                            <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mb-1 tracking-widest" data-original="DESIGN IS">DESIGN IS</span> 
-                            <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="THE LANGUAGE">THE LANGUAGE</span>
-                        </div>
+                    <div class="hero-text-pure font-sans flex flex-col items-start interactive-phrase float-anim-2 absolute hover-target top-[50%] right-[15%]" data-shape="logo">
+                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mb-1 tracking-widest" data-original="DESIGN IS">DESIGN IS</span> 
+                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="THE LANGUAGE">THE LANGUAGE</span>
                     </div>
                     
-                    <div data-speed="0.05" class="absolute bottom-[12%] left-[43%]">
-                        <div class="hero-text-pure font-sans flex flex-col items-center interactive-phrase float-anim-3 hover-target pointer-events-auto" data-shape="torus">
-                            <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="CREATION">CREATION</span> 
-                            <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS DIVINE">IS DIVINE</span>
-                        </div>
+                    <div class="hero-text-pure font-sans flex flex-col items-center interactive-phrase float-anim-3 absolute hover-target bottom-[12%] left-[43%]" data-shape="torus">
+                        <span class="font-normal text-white glitch-full !font-sans tracking-wide" data-original="CREATION">CREATION</span> 
+                        <span class="text-meta text-[#a3a3a3] glitch-partial !font-sans mt-1 tracking-widest" data-original="IS DIVINE">IS DIVINE</span>
                     </div>
-
                 </div>
 
                 <div class="absolute bottom-8 left-6 md:left-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
                     SCROLL TO EXPLORE
                 </div>
                 <div class="absolute bottom-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
-                    OPEN TO REMOTE
+                    SCROLL TO EXPLORE
                 </div>
                 
             </section>
@@ -366,46 +363,47 @@
                         </div>
                     </div>
 
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         HARDWARE UX/UI</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         INTERACTIVE MEDIA</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         MVP DESIGN</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
-                        PRODUCT DESIGN</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
-                        CREATIVE DIRECTION</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
-                        WEBSITE DESIGN</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
-                        CREATIVE INNOVATION</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
+                        PRODUCT DESIGN</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
+                        CREATIVE DIRECTION</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
+                        WEBSITE DESIGN</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
+                        CREATIVE INNOVATION</div> <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         HUMAN FACTORS</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         BRAND NARRATIVE</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         CREATIVE CODING</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         MOTION DESIGN</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         BRAND IDENTITY</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         USER RESEARCH</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         DATA VISUALIZATION</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         INSTRUCTIONAL DESIGN</div>   
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         PRODUCT STRATEGY</div>
-                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(10px,1.5vw,14px)] py-[clamp(14px,2.5vw,20px)] border border-white/5 rounded">
+                    <div class="wheel-tag absolute right-[-10%] md:right-[-5%] top-1/2 floating-phrase interactive-phrase hover-target opacity-0 origin-center whitespace-nowrap text-[#a3a3a3] text-[clamp(10px,1.2vw,14px)] uppercase tracking-widest bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(6px,1vw,10px)] py-[clamp(12px,2vw,18px)] border border-white/5 rounded">
                         HARDWARE UX/UI</div>
                 </div>
             </section>
         </div>
 
         <section id="process-pin-container" class="w-full max-w-[100vw] h-screen relative z-20 bg-transparent overflow-hidden flex flex-col justify-center">
+
             <div class="w-full px-6 lg:px-12 z-10 pointer-events-none mb-6">
                 <h2 class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono line-mask">
                     <span class="line-mask-inner process-header-reveal flex items-center gap-3">
                         <span class="w-1.5 h-1.5 bg-[#a3a3a3] rounded-full inline-block opacity-70"></span>
-                        What I can build for you
+                        What I do
                     </span>
                 </h2>
             </div>
@@ -413,115 +411,87 @@
             <div class="process-slider flex gap-6 px-6 lg:px-12 w-[max-content] items-center">
 
                 <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
-                    <video
-                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
-                        muted loop playsinline preload="metadata">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="auto">
+                        
                         <source src="https://videos.pexels.com/video-files/35968183/15249566_1920_1080_30fps.mp4" type="video/mp4">
+                        
                     </video>
+                    
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
                     <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
                         <div>
                             <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(01)</span>
-                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">
-                                Brand Narrative<br>
-                                <span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Websites.</span>
-                            </h3>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">UX / UI<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Design.</span></h3>
                         </div>
                         <div class="mt-8">
                             <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
-                                Your brand has a story. I build the site that tells it — scroll by scroll.
+                                UX/UI for websites and product interfaces
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
-                    <video
-                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
-                        muted loop playsinline preload="metadata">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="auto">
                         <source src="https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4" type="video/mp4">
                     </video>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
                     <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
                         <div>
                             <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(02)</span>
-                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">
-                                Product UX / UI<br>
-                                <span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Design.</span>
-                            </h3>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">Narrative &<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Interaction.</span></h3>
                         </div>
                         <div class="mt-8">
                             <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
-                                Interfaces that feel inevitable. For apps, dashboards, and early-stage products.
+                                Narrative, scroll‑based, and interaction‑driven experiences
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
-                    <video
-                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
-                        muted loop playsinline preload="metadata">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="auto">
                         <source src="https://videos.pexels.com/video-files/25744127/11904066_2560_1440_15fps.mp4" type="video/mp4">
                     </video>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
                     <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
                         <div>
                             <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(03)</span>
-                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">
-                                Motion-Led<br>
-                                <span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Interfaces.</span>
-                            </h3>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">Front-End<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Motion.</span></h3>
                         </div>
                         <div class="mt-8">
                             <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
-                                Scroll, hover, reveal. Interaction as narrative — built with GSAP and WebGL.
+                                Front‑end implementation (GSAP, WebGL, creative JS)
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
-                    <video
-                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
-                        muted loop playsinline preload="metadata">
-                        <source src="https://videos.pexels.com/video-files/4262541/4262541-uhd_2560_1440_25fps.mp4" type="video/mp4">
+                    <video 
+                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" 
+                        muted loop playsinline preload="auto">
+                        <source src="https://www.pexels.com/download/video/25744121/" type="video/mp4">
                     </video>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
+
                     <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
                         <div>
                             <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(04)</span>
-                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">
-                                Creative<br>
-                                <span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Front-End.</span>
-                            </h3>
+                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">Workspace<br><span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Design.</span></h3>
                         </div>
                         <div class="mt-8">
                             <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
-                                Design that ships. I bridge Figma and the browser — no handoff lost in translation.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="process-block-card group relative w-[90vw] md:w-[60vw] lg:w-[45vw] h-[60vh] flex-shrink-0 border border-[var(--fg)]/30 overflow-hidden bg-[var(--bg)] hover-target cursor-none">
-                    <video
-                        class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
-                        muted loop playsinline preload="metadata">
-                        <source src="https://videos.pexels.com/video-files/25744121/11904063_2560_1440_15fps.mp4" type="video/mp4">
-                    </video>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none"></div>
-                    <div class="relative z-10 w-full h-full p-8 lg:p-12 flex flex-col justify-between pointer-events-none">
-                        <div>
-                            <span class="p-num text-body transition-colors duration-500 group-hover:text-white">(05)</span>
-                            <h3 class="p-title text-display leading-[0.9] tracking-tight mt-4 font-sans font-semibold transition-colors duration-500 group-hover:text-white">
-                                Workspace<br>
-                                <span class="italic font-normal text-[var(--fg)]/80 group-hover:text-white inline transition-colors duration-500" style="font-family: 'Instrument Serif', serif;">Design.</span>
-                            </h3>
-                        </div>
-                        <div class="mt-8">
-                            <div class="text-[clamp(1.2rem,1.5vw,2rem)] leading-relaxed pt-2 p-desc text-[var(--fg)]/80 group-hover:text-white/90 transition-colors duration-500">
-                                How your team works shapes what they build. Workflow analysis, space, and systems.
+                                Workflow analysis, Notion workspace design, and cognitive load reduction
                             </div>
                         </div>
                     </div>
@@ -530,10 +500,59 @@
             </div>
         </section>
 
+        <section id="work" class="w-full pt-20 relative z-20 bg-transparent">
+            <div class="w-full px-6 lg:px-12 z-10 pointer-events-none mb-6">
+                <h2 class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono split-line line-mask">
+                    <span class="line-mask-inner flex items-center gap-3">
+                        <span class="w-1.5 h-1.5 bg-[#a3a3a3] rounded-full inline-block opacity-70"></span>
+                        Selected Work <span class="text-[var(--fg)]/40 font-sans italic ml-1">(5)</span>
+                    </span>
+                </h2>
+            </div>
+
+            <div class="relative border-t border-[var(--fg)]/20 work-list-container">
+                <a href="#" class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item" data-img="https://images.unsplash.com/photo-1579566346927-c68383817a25?q=80&w=1000&auto=format&fit=crop">
+                    <div class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
+                        <h3 class="font-sans font-semibold text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                            Organ-on-Chip Medical <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Device.</span></h3>
+                        <div class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                            <span class="text-meta">HARDWARE UX</span>
+                            <span class="text-meta">2025</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item" data-img="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop">
+                    <div class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
+                        <h3 class="font-sans font-semibold text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                            Internal Creative AI <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Tools.</span></h3>
+                        <div class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                            <span class="text-meta">VISUAL IDEATION</span>
+                            <span class="text-meta">2024</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="block border-b border-[var(--fg)]/20 px-6 lg:px-12 py-12 md:py-16 group relative hover-target cursor-none work-list-item" data-img="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop">
+                    <div class="absolute inset-0 bg-[var(--fg)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none">
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row md:items-center justify-between relative z-10">
+                        <h3 class="font-sans font-semibold text-4xl md:text-5xl lg:text-7xl group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                            Regulated Digital <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Products.</span></h3>
+                        <div class="flex items-center gap-8 mt-6 md:mt-0 text-[var(--fg)]/60 group-hover:text-[var(--fg)] transition-colors duration-300">
+                            <span class="text-meta">COMPLIANCE SYSTEMS</span>
+                            <span class="text-meta">2024</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
         <section id="other-projects" class="w-full relative z-20 bg-transparent text-[var(--fg)] pb-16">
             <div class="w-full px-6 lg:px-12 pt-8 pb-4 border-t-0 flex items-center gap-3">
                 <span class="w-1.5 h-1.5 bg-[#a3a3a3] rounded-full inline-block opacity-70"></span>
-                <span class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono">Labs, Tools & Experiments</span>
+                <span class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono">Other Projects</span>
             </div>
             <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                 <a href="#" class="block p-6 lg:p-12 border border-[var(--fg)]/30 hover:bg-white/5 transition-all duration-500 group hover-target cursor-none relative flex flex-col justify-start">
@@ -542,8 +561,9 @@
                         </path>
                     </svg>
                     <h3 class="text-3xl font-sans font-semibold mb-3 group-hover:translate-x-1 transition-transform duration-500">
-                        Creative <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Tools.</span></h3>
-                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Internal tools and utilities that help teams build and innovate faster.</p>
+                        VR Haptic <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Glove.</span></h3>
+                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Hardware interaction models for physical
+                        feedback in virtual environments.</p>
                 </a>
                 <a href="#" class="block p-6 lg:p-12 border border-[var(--fg)]/30 hover:bg-white/5 transition-all duration-500 group hover-target cursor-none relative flex flex-col justify-start">
                     <svg class="w-8 h-8 text-[#a3a3a3] mb-8 group-hover:text-[var(--fg)] group-hover:-translate-y-1 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -551,23 +571,25 @@
                         </path>
                     </svg>
                     <h3 class="text-3xl font-sans font-semibold mb-3 group-hover:translate-x-1 transition-transform duration-500">
-                        Concept <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Narratives.</span></h3>
-                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Using the web to experiment how we tell stories with motion and interaction.</p>
+                        Digital <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Platforms.</span></h3>
+                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Scalable design systems architecture for
+                        complex enterprise web applications.</p>
                 </a>
                 <a href="#" class="block p-6 lg:p-12 border border-[var(--fg)]/30 hover:bg-white/5 transition-all duration-500 group hover-target cursor-none relative flex flex-col justify-start">
                     <svg class="w-8 h-8 text-[#a3a3a3] mb-8 group-hover:text-[var(--fg)] group-hover:-translate-y-1 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                     <h3 class="text-3xl font-sans font-semibold mb-3 group-hover:translate-x-1 transition-transform duration-500">
-                         Creative AI <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">Workflows.</span></h3>
-                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">AI creative workflows to explore, prototype, and create.</p>
+                        Creative <span class="italic font-normal text-[var(--fg)]/80 inline" style="font-family: 'Instrument Serif', serif;">AI.</span></h3>
+                    <p class="text-sm text-[#a3a3a3] leading-relaxed max-w-sm">Designing with and around AI — tools,
+                        workflows, and creative systems that actually get used.</p>
                 </a>
             </div>
         </section>
 
         <footer id="contact" class="w-full min-h-screen flex flex-col items-center justify-between bg-transparent text-[var(--fg)] relative overflow-hidden z-20 pt-24 pb-6">
 
-            <div id="physics-container" class="absolute inset-0 w-full h-full pointer-events-auto z-0 touch-none"></div>
+            <div id="physics-container" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></div>
 
             <div class="absolute inset-0 flex items-center justify-center pt-20 lg:pt-12 pointer-events-none px-6 z-10 transition-opacity duration-300" id="measurement-container">
                 <h2 id="footer-massive-text" class="text-[clamp(8vw,11vw,12rem)] leading-[0.85] font-serif tracking-[0.05em] text-center w-full select-none text-[var(--fg)]">
@@ -575,8 +597,8 @@
             </div>
             
             <div class="absolute top-[10%] max-md:top-[12%] flex flex-col items-center justify-center z-30 pointer-events-none w-full gap-4">
-                <button id="cta-start-project" aria-label="Start Project"
-                    class="opacity-0 pointer-events-none bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(24px,2.5vw,32px)] py-[clamp(16px,1.5vw,20px)] min-h-[44px] min-w-[44px] border border-white/10 rounded font-sans font-semibold uppercase tracking-widest text-sm text-[#a3a3a3] hover:scale-105 hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-all duration-300 shadow-lg">
+                <button id="cta-start-project" 
+                    class="opacity-0 pointer-events-none bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(24px,2.5vw,32px)] py-[clamp(16px,1.5vw,20px)] border border-white/10 rounded font-sans font-semibold uppercase tracking-widest text-sm text-[#a3a3a3] hover:scale-105 hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-all duration-300 shadow-lg">
                     Start Project
                 </button>
                 <p id="stay-and-play-msg" class="opacity-0 font-serif italic text-[#a3a3a3] text-lg transition-opacity duration-500 pointer-events-none">
@@ -589,9 +611,9 @@
             <div id="footer-meta-bar" class="relative z-30 flex flex-col md:flex-row items-center justify-between w-full px-6 lg:px-12 mt-auto text-meta pointer-events-none border-t border-[var(--fg)]/10 pt-6">
                 
                 <div class="flex gap-8 pointer-events-auto text-[var(--fg)]/70 w-full md:w-1/3 justify-start">
-                    <a href="#process-pin-container" class="hover:text-[var(--fg)] hover-target transition-colors p-2 -m-2 inline-block">SERVICES</a>
+                    <a href="#process-pin-container" class="hover:text-[var(--fg)] hover-target transition-colors">SERVICES</a>
                     <div class="relative group">
-                        <a href="#role-container" class="hover:text-[var(--fg)] hover-target transition-colors p-2 -m-2 inline-block">SUBSCRIBE</a>
+                        <a href="#role-container" class="hover:text-[var(--fg)] hover-target transition-colors">SUBSCRIBE</a>
                         <div class="absolute bottom-full left-0 mb-4 w-64 p-5 bg-[var(--bg)] border border-[var(--fg)]/20 shadow-2xl rounded opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
                             <p class="text-sm normal-case tracking-normal font-sans text-[var(--fg)]/90 leading-relaxed">Subscribe for updates on my latest work and creative insights</p>
                         </div>
@@ -599,7 +621,7 @@
                 </div>
 
                 <div class="pointer-events-auto flex items-center justify-center w-full md:w-1/3 my-4 md:my-0">
-                    <img src="img/logo-svg.svg" alt="Franco Designio Logo" class="h-4 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity">
+                    <img src="img/logo-svg.svg" alt="Small Logo" class="h-4 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity">
                 </div>
 
                 <div class="pointer-events-auto text-[var(--fg)]/70 w-full md:w-1/3 flex justify-end text-right">
@@ -613,7 +635,6 @@
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
         gsap.registerPlugin(ScrollTrigger);
 
         // ==========================================
@@ -647,6 +668,9 @@
             history.scrollRestoration = 'manual';
         }
         window.scrollTo(0, 0);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            window.scrollTo(0, 0);
 
             // =======================================================
             // TOUCH DETECTION & CUSTOM CURSOR LOGIC
@@ -697,17 +721,6 @@
             function initHeroGlitch() {
                 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 const phrases = document.querySelectorAll('.hero-text-pure');
-                let isHeroVisible = true;
-                
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        isHeroVisible = entry.isIntersecting;
-                    });
-                }, { threshold: 0 });
-                const heroSection = document.getElementById('hero-foreground');
-                if (heroSection) {
-                    observer.observe(heroSection);
-                }
 
                 phrases.forEach(phrase => {
                     const spans = phrase.querySelectorAll('.glitch-full, .glitch-partial');
@@ -742,7 +755,7 @@
                     let timeOffset = Math.random() * 100; // Desync the breathing across phrases
 
                     const tick = () => {
-                        if (isHovered || !isHeroVisible) return;
+                        if (isHovered) return;
                         timeOffset += 0.2; // Speed of the corruption wave
 
                         // Sine wave to create a "breathing" corruption effect (from mostly legible to mostly scrambled)
@@ -819,11 +832,8 @@
                 let animationFrameId;
                 let width = window.innerWidth;
                 let height = window.innerHeight;
-                
-                // PERFORMANCE: Increase char size on mobile to render drastically fewer elements
-                const isMobile = width < 768;
-                let charWidth = isMobile ? 12 : 9;
-                let charHeight = isMobile ? 20 : 15;
+                let charWidth = 9;
+                let charHeight = 15;
                 let columns = Math.ceil(width / charWidth);
                 let rows = Math.ceil(height / charHeight);
 
@@ -977,7 +987,6 @@
                 const shapes = { eye: eyeGroup, torus: torusGroup, pawn: pawnGroup, logo: logoGroup };
 
                 Object.values(shapes).forEach(shape => shape.userData = { targetScale: 0, baseRotationY: 0 });
-                
                 shapes['eye'].userData.targetScale = 1;
 
                 window.switchShape = (target) => {
@@ -989,10 +998,6 @@
 
                 const handleResize = () => {
                     width = window.innerWidth; height = window.innerHeight;
-                    const isMobileNow = width < 768;
-                    charWidth = isMobileNow ? 12 : 9;
-                    charHeight = isMobileNow ? 20 : 15;
-                    
                     const dpr = window.devicePixelRatio || 1;
 
                     canvas.width = width * dpr; canvas.height = height * dpr;
@@ -1042,11 +1047,7 @@
 
                 const handleScroll = () => { scrollY = window.scrollY; };
 
-                let resizeTimeout;
-                window.addEventListener('resize', () => {
-                    clearTimeout(resizeTimeout);
-                    resizeTimeout = setTimeout(handleResize, 150);
-                });
+                window.addEventListener('resize', handleResize);
                 window.addEventListener('scroll', handleScroll, { passive: true });
                 window.addEventListener('mousemove', (e) => { mouse.tx = e.clientX; mouse.ty = e.clientY; });
                 handleResize();
@@ -1064,14 +1065,8 @@
                     const tXNorm = (mouse.x / width) * 2 - 1;
                     const tYNorm = -(mouse.y / height) * 2 + 1;
 
-                    // Reduce the fade out scaling so it stays visibly exiting the top of the viewport
-                    const scrollRatio = Math.max(0, scrollY / height);
-                    const scrollFade = Math.max(0, 1 - scrollRatio * 0.5); 
-
-                    // World Space calculations for Camera
-                    const fov = camera.fov * (Math.PI / 180);
-                    const visibleHeightAtZ = 2 * Math.tan(fov / 2) * camera.position.z;
-                    const scrollOffsetWorld = (scrollY / height) * visibleHeightAtZ;
+                    const scrollRatio = Math.max(0, Math.min(scrollY / height, 1));
+                    const scrollFade = Math.max(0, 1 - scrollRatio * 1.5);
 
                     Object.values(shapes).forEach(obj => {
                         const ts = obj.userData.targetScale * scrollFade;
@@ -1084,9 +1079,7 @@
                         const tiltAmount = (obj === logoGroup) ? 0.2 : 0.8;
                         obj.rotation.y += ((tXNorm * tiltAmount + obj.userData.baseRotationY) - obj.rotation.y) * 0.25;
                         obj.rotation.x += (-tYNorm * tiltAmount - obj.rotation.x) * 0.25;
-                        
-                        // Add scrollY-based vertical offset to physically move it upward slower than the scroll
-                        obj.position.y = Math.sin(time * 1.5) * 0.2 + (scrollOffsetWorld * 0.65);
+                        obj.position.y = Math.sin(time * 1.5) * 0.2;
                     });
 
                     if (currentShape === 'eye') {
@@ -1312,19 +1305,14 @@
                     }
                 });
 
-                // Parallax Floating Text Effect (Based on data-speed wrappers)
-                document.querySelectorAll('[data-speed]').forEach(el => {
-                    const speed = parseFloat(el.getAttribute('data-speed'));
-                    gsap.to(el, {
-                        y: () => -window.innerHeight * speed * 2,
-                        ease: "none",
-                        scrollTrigger: {
-                            trigger: "#hero-foreground",
-                            start: "top top",
-                            end: "bottom top",
-                            scrub: true,
-                            invalidateOnRefresh: true
-                        }
+                document.querySelectorAll('.split-line').forEach(el => {
+                    const text = el.innerHTML;
+                    if (!el.querySelector('.line-mask-inner')) {
+                        el.innerHTML = `<span class="line-mask"><span class="line-mask-inner block">${text}</span></span>`;
+                    }
+                    gsap.to(el.querySelector('.line-mask-inner'), {
+                        y: "0%", duration: 1.2, ease: "expo.out",
+                        scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" }
                     });
                 });
 
@@ -1367,6 +1355,14 @@
                         }
                     });
                 }
+
+                const workItems = document.querySelectorAll('.work-list-item');
+                workItems.forEach(item => {
+                    gsap.fromTo(item,
+                        { opacity: 0, y: 30 },
+                        { opacity: 1, y: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" } }
+                    );
+                });
 
                 // MATTER.JS FOOTER PHYSICS 
                 const container = document.getElementById('physics-container');
@@ -1589,7 +1585,7 @@
 
                             reassemblePromise.then(() => {
                                 // 1. Open Form in a new tab
-                                window.open("https://francodesignio.notion.site/99f7ea323bbe82d1991081a507e15493?pvs=105", "_blank", "noopener,noreferrer");
+                                window.open("https://francodesignio.notion.site/99f7ea323bbe82d1991081a507e15493?pvs=105", "_blank");
 
                                 // 2. Sequence the "Stay and Play" transition
                                 gsap.to(newCtaBtn, { opacity: 0, duration: 0.5 }); // Fade out button temporarily
@@ -1666,11 +1662,10 @@
                 const group2 = [
                     "Narrative Architect",
                     "Systems Thinker",
-                    "Product Wizard",
-
                 ];
 
                 const group3 = [
+                    "Product Wizard",
                     "AI Artisan",
                     "Concept Sculptor",
                 ];
@@ -1678,8 +1673,8 @@
                 const group4 = [
                     "Void Starer",
                     "Lousy Cook",
+                    "Ornament Apologist",
                     "Flow State Skeptic",
-                    "Digital Monk"
                 ];
 
                 const TITLE_DURATION = 3500;
@@ -1907,6 +1902,7 @@
                     }
                 }, { passive: true });
             });
+
         });
     </script>
 </body>
