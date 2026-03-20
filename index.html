@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>/FrancoDesignio. — Human-Centered Design & Creative Technology</title>
-    <!-- Favicon -->
     <link rel="icon" type="image/svg" href="img/favicon2.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +27,7 @@
             /* Customize the individual ASCII shapes color */
             --shape-eye: #ffffff;
             --shape-torus: #e4e4e4;
-            --shape-pawn: #ffe600;
+            --shape-pawn: #ffd500; /* previously #ffe600 */
             --shape-logo: #e4e4e4;
         }
 
@@ -217,20 +216,37 @@
             touch-action: pan-y !important;
         }
 
-        /* Stack Process cards vertically on mobile */
+        /* Stack Process cards horizontally via GSAP Scroll on Mobile */
         @media (max-width: 768px) {
+            /* 1. Reset container to allow GSAP to handle transform pinning */
             .process-slider {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                transform: none !important;
-                gap: 2rem;
+                padding-bottom: 2rem !important;
+                padding-left: 7.5vw !important; /* Perfect centering offset for 85vw cards */
+                padding-right: 7.5vw !important;
             }
+
+            /* 2. Card Sizing */
             .process-block-card {
-                width: 100%;
-                min-height: 400px;
-                height: 50vh;
+                width: 85vw !important; /* Leaves a peek of the next card */
+                min-height: 400px !important;
+                height: 50vh !important;
+                flex-shrink: 0 !important;
             }
+
+            /* Programmatic Mobile "Hover" States (Triggered by IntersectionObserver) */
+            .process-block-card.mobile-active video {
+                opacity: 1 !important;
+                transform: scale(1) !important;
+            }
+            .process-block-card.mobile-active .bg-gradient-to-t {
+                opacity: 1 !important;
+            }
+            .process-block-card.mobile-active .p-num,
+            .process-block-card.mobile-active .p-title,
+            .process-block-card.mobile-active .p-desc {
+                color: white !important;
+            }
+
             /* Fix for animated role text overflow on mobile */
             .role-wrapper {
                 white-space: normal !important;
@@ -374,16 +390,16 @@
 
                 </div>
 
-                <div class="absolute bottom-8 left-6 md:left-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
+                <div class="hero-fade-text absolute bottom-8 left-6 md:left-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
                     SCROLL TO EXPLORE
                 </div>
-                <div class="absolute bottom-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
+                <div class="hero-fade-text absolute bottom-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap text-[#a3a3a3] font-sans">
                     OPEN TO REMOTE
                 </div>
                 
             </section>
             
-            <section class="relative min-h-screen w-full flex flex-col md:flex-row items-center justify-between px-6 md:px-24 py-24 md:py-0 pointer-events-none gap-16 md:gap-0 max-md:static max-md:block max-md:pt-24">
+            <section class="relative min-h-screen max-md:min-h-fit w-full flex flex-col md:flex-row items-center justify-between px-6 md:px-24 py-24 md:py-0 pointer-events-none gap-16 md:gap-0 max-md:static max-md:block max-md:pt-0 max-md:pb-4">
                 
                 <div class="w-full md:w-1/2 pointer-events-auto max-md:absolute max-md:top-[55svh] max-md:left-0 max-md:w-full max-md:px-6 max-md:z-20 max-md:[text-shadow:0_4px_30px_rgba(0,0,0,0.8)]">
                     <h2 class="text-[11.5vw] sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[1.05] drop-shadow-2xl max-md:w-full">
@@ -399,7 +415,7 @@
                     </h2>
                 </div>
                 
-                <div id="expertise-wheel" class="w-full md:w-1/2 min-h-[400px] md:min-h-[500px] pointer-events-auto mt-12 md:mt-0 relative overflow-visible max-md:mt-8 max-md:min-h-[60vh]">
+                <div id="expertise-wheel" class="w-full md:w-1/2 min-h-[400px] md:min-h-[500px] pointer-events-auto mt-12 md:mt-0 relative overflow-visible max-md:mt-6 max-md:min-h-[350px]">
                     
                     <div id="wheel-axle" class="absolute top-1/2 -translate-y-1/2 max-md:!top-1/2 max-md:!-translate-y-1/2 right-[-10%] md:right-[-5%] max-md:!right-[-15vw] flex flex-col items-end z-10 opacity-0">
                         <div class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono flex items-center gap-3">
@@ -442,7 +458,7 @@
             </section>
         </div>
         
-        <section id="process-pin-container" class="w-full h-screen relative z-20 bg-transparent overflow-hidden flex flex-col justify-center max-md:h-auto max-md:py-16">
+        <section id="process-pin-container" class="w-full h-[100svh] md:h-screen relative z-20 bg-transparent overflow-hidden flex flex-col justify-center">
             <div class="w-full px-6 lg:px-12 z-10 pointer-events-none mb-6">
                 <h2 class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono line-mask">
                     <span class="line-mask-inner process-header-reveal flex items-center gap-3">
@@ -1357,6 +1373,18 @@
 
             function initScrollAnimations() {
 
+                // Hero Text Fade Out
+                gsap.to('.hero-fade-text', {
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    scrollTrigger: {
+                        trigger: 'body',
+                        start: 'top top',
+                        end: '200px',
+                        scrub: true
+                    }
+                });
+
                 gsap.to(".scroll-indicator", {
                     autoAlpha: 0, 
                     y: 20, 
@@ -1411,6 +1439,8 @@
                     });
 
                     let mm = gsap.matchMedia();
+                    
+                    // Desktop Behavior
                     mm.add("(min-width: 769px)", () => {
                         gsap.to(processSlider, {
                             x: () => -(processSlider.scrollWidth - window.innerWidth + 100),
@@ -1424,6 +1454,44 @@
                                 invalidateOnRefresh: true
                             }
                         });
+                    });
+
+                    // Mobile Behavior (Pinned, Scrubbed, Sticky Segmented Snapping)
+                    mm.add("(max-width: 768px)", () => {
+                        const totalScroll = processSlider.scrollWidth - window.innerWidth;
+                        const numCards = processCards.length;
+                        
+                        let tl = gsap.timeline({
+                            scrollTrigger: {
+                                trigger: processPin,
+                                start: "center center", 
+                                end: () => `+=${totalScroll * 1.5}`, // Make scroll space a bit taller for soft swiping
+                                pin: true,
+                                scrub: 0.8, // Smooth momentum catch-up
+                                snap: {
+                                    snapTo: "labels", // Relies on proximity to our precise pauses, not velocity/direction
+                                    duration: { min: 0.2, max: 0.4 },
+                                    delay: 0.05, 
+                                    ease: "power2.inOut"
+                                },
+                                invalidateOnRefresh: true
+                            }
+                        });
+
+                        // 1. Deadzone for Card 1 (allows user to actually see it before it moves)
+                        tl.addLabel("card0")
+                          .to({}, { duration: 0.15 });
+
+                        // 2. Build the scroll segments
+                        for (let i = 1; i < numCards; i++) {
+                            tl.to(processSlider, {
+                                x: -(totalScroll / (numCards - 1)) * i,
+                                ease: "none",
+                                duration: 1
+                            })
+                            .addLabel(`card${i}`)
+                            .to({}, { duration: 0.15 }); // Deadzone (sticky pause) for every subsequent card
+                        }
                     });
                 }
 
@@ -1869,9 +1937,9 @@
                 let tl = gsap.timeline({
                     scrollTrigger: {
                         trigger: wheel,
-                        start: "top bottom+=250",
-                        end: "bottom top-=250",
-                        scrub: 0.2
+                        start: "top 90%",
+                        end: "bottom 20%",
+                        scrub: 0.5
                     }
                 });
 
@@ -1911,7 +1979,7 @@
             initRotatingTitles();
 
             // =======================================================
-            // SERVICE CARDS VIDEO HOVER LOGIC
+            // SERVICE CARDS VIDEO HOVER LOGIC & MOBILE DOCKING
             // =======================================================
             const serviceCards = document.querySelectorAll('.process-block-card');
 
@@ -1932,17 +2000,42 @@
                         video.pause();
                     }, 700);
                 });
-
-                // Mobile fallback: pause/play on touch
-                card.addEventListener('touchstart', () => {
-                    clearTimeout(pauseTimeout);
-                    if (video.paused) {
-                        video.play().catch(e => console.warn("Video autoplay blocked:", e));
-                    } else {
-                        video.pause();
-                    }
-                }, { passive: true });
             });
+
+            // Mobile Video Docking & Haptic Feedback
+            if (window.innerWidth <= 768) {
+                const sliderRoot = document.querySelector('.process-slider');
+                
+                const observerOptions = {
+                    // Uses document viewport implicitly to safely detect GSAP transform movements
+                    rootMargin: '0px',
+                    threshold: 0.75 // Enforces a stricter threshold so videos only play when fully snapped into view
+                };
+
+                const videoObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const vid = entry.target.querySelector('video');
+                        if (!vid) return;
+
+                        if (entry.isIntersecting) {
+                            // Card is docked
+                            vid.play().catch(e => console.warn("Autoplay blocked:", e));
+                            entry.target.classList.add('mobile-active');
+                            
+                            // Trigger subtle haptic feedback
+                            if (typeof navigator.vibrate === "function") {
+                                navigator.vibrate(8);
+                            }
+                        } else {
+                            // Card scrolled away
+                            vid.pause();
+                            entry.target.classList.remove('mobile-active');
+                        }
+                    });
+                }, observerOptions);
+
+                serviceCards.forEach(card => videoObserver.observe(card));
+            }
         });
     </script>
 </body>
