@@ -214,6 +214,43 @@
             pointer-events: auto;
         }
 
+        /* Rotating Quote Animation Utilities */
+        .quote-wrapper {
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
+            width: max-content; /* <-- Cambiado de 100% a max-content para precisión de medida */
+            height: max-content;
+            display: block;
+            will-change: transform, opacity, filter;
+        }
+
+        #quote-top-dynamic, #quote-bottom-dynamic {
+            display: inline-grid;
+            vertical-align: bottom;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* Suaviza el cambio de ancho */
+        }
+
+        .quote-hidden-bottom {
+            transform: translateY(60%);
+            opacity: 0;
+            filter: blur(8px);
+            pointer-events: none;
+        }
+
+        .quote-hidden-top {
+            transform: translateY(-60%);
+            opacity: 0;
+            filter: blur(8px);
+            pointer-events: none;
+        }
+
+        .quote-visible {
+            transform: translateY(0);
+            opacity: 1;
+            filter: blur(0);
+            pointer-events: auto;
+        }
+
         /* ASCII Tracking Core Styles */
         #ascii-container {
             white-space: pre;
@@ -473,7 +510,7 @@
     </div>
 
     <div
-        class="fixed top-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap hover-target mix-blend-difference font-sans text-white max-md:text-[10px]">
+        class="fixed top-8 right-6 md:right-12 z-40 text-meta tracking-widest pointer-events-auto whitespace-nowrap hover-target mix-blend-difference font-sans text-white">
         <span class="max-md:hidden">HUMAN-CENTERED WEB DESIGN & CREATIVE TECHNOLOGY</span>
         <span class="hidden max-md:inline">HUMAN WEB DESIGN</span>
     </div>
@@ -543,18 +580,20 @@
                 <div class="flex flex-col md:flex-row items-center justify-between w-full mt-auto mb-auto">
 
                     <div
-                        class="w-full md:w-1/2 pointer-events-auto max-md:absolute max-md:top-[52svh] max-md:left-0 max-md:w-full max-md:px-6 max-md:z-20 max-md:[text-shadow:0_4px_30px_rgba(0,0,0,0.8)]">
+                        class="w-full md:w-1/2 pointer-events-auto max-md:absolute max-md:top-[58svh] max-md:left-0 max-md:w-full max-md:px-6 max-md:z-20 max-md:[text-shadow:0_4px_30px_rgba(0,0,0,0.8)]">
                         <h2
                             class="text-[11.5vw] sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[1.05] drop-shadow-2xl max-md:w-full">
+                            
                             <span
-                                class="block text-[14px] md:text-base font-sans font-normal text-[#a3a3a3] mb-2 tracking-wide uppercase">
+                                class="block text-[14px] md:text-base font-sans font-normal text-[#a3a3a3] mb-2 max-md:mb-4 max-md:ml-[2px] tracking-wide uppercase">
                                 I'm Franco
                             </span>
-                            <span class="block text-[var(--fg)] text-[1.15em] mb-0 max-md:mb-1 italic"
+                            
+                            <span class="block text-[var(--fg)] text-[1.15em] mb-0 italic max-md:leading-[0.7]"
                                 style="font-family: 'Instrument Serif', serif;">
                                 Designer &
                             </span>
-                            <span class="grid overflow-visible py-1 md:py-2 relative min-w-full max-md:w-full"
+                            <span class="grid overflow-visible pb-1 md:py-2 relative min-w-full max-md:w-full max-md:-mt-4"
                                 id="role-container">
                             </span>
                         </h2>
@@ -566,50 +605,48 @@
                 </div>
 
                 <div id="expertise-desktop-block"
-                    class="w-full pointer-events-auto mt-12 md:mt-8 relative overflow-hidden hidden md:flex flex-col justify-center mb-12">
+                    class="w-full pointer-events-auto mt-20 md:mt-12 relative overflow-hidden hidden md:flex flex-col justify-center mb-12">
                     <section class="expertise-section bg-transparent w-full overflow-hidden">
-                        <div
-                            class="expertise-eyebrow font-sans text-[11px] tracking-[0.18em] uppercase text-white/30 px-[26px] mb-6 flex items-center gap-2">
-                            <div class="expertise-eyebrow-dot w-[6px] h-[6px] rounded-full bg-white/30 shrink-0"></div>
-                            Expertise
-                        </div>
                         <div class="marquee-bands flex flex-col" id="desktopMarqueeBands"></div>
                     </section>
                 </div>
-
             </section>
         </div>
 
         <section id="quote-marquee-section"
-            class="w-full relative z-20 flex flex-col items-center justify-center pt-0 pb-10 md:py-32 max-md:-mt-32 pointer-events-none bg-transparent">
-
-            <div id="quote-marquee-text"
-                class="px-6 md:px-12 text-center z-10 max-w-full mx-auto mb-8 md:mb-16 pointer-events-auto">
-                <p class="text-[clamp(2.8rem,5vw,4.5rem)] leading-[0.9] text-[var(--fg)] font-sans font-bold tracking-tighter opacity-0 translate-y-8"
-                    id="quote-text-anim">
-                    <span class="block whitespace-nowrap">Your Essence,</span>
-                    <span class="block whitespace-nowrap font-normal text-[#a3a3a3] italic"
-                        style="font-family: 'Instrument Serif', serif;">Made Visible.</span>
-                </p>
-            </div>
+            class="w-full relative z-20 flex flex-col items-center justify-center pt-0 pb-10 md:py-32 max-md:-mt-48 pointer-events-none bg-transparent">
 
             <div id="mobile-marquee"
-                class="w-full hidden max-md:block relative z-10 opacity-0 translate-y-4 pointer-events-none">
+                class="w-full hidden max-md:block relative z-10 opacity-0 translate-y-4 pointer-events-none pt-2">
                 <section class="expertise-section bg-transparent w-full overflow-hidden">
-                    <div class="expertise-eyebrow font-sans text-[9px] tracking-[0.18em] uppercase text-white/15 px-[26px] mb-4 flex items-center gap-2"
-                        style="text-shadow: 0 0 10px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,1);">
-                        <div class="expertise-eyebrow-dot w-[5px] h-[5px] rounded-full bg-white/15 shrink-0"
-                            style="box-shadow: 0 0 10px rgba(0,0,0,1);"></div>
-                        Expertise
-                    </div>
                     <div class="marquee-bands flex flex-col" id="mobileMarqueeBands"></div>
                 </section>
             </div>
 
+            <div id="quote-marquee-text"
+                class="px-4 md:px-12 text-center z-10 max-w-full mx-auto mb-8 md:mb-16 pointer-events-auto mt-24 max-md:mt-8 max-md:mb-0">
+                <div class="inline-block text-[clamp(2rem,10vw,4rem)] md:text-[clamp(3.5rem,15vw,10rem)] leading-[0.85] text-[var(--fg)] font-sans font-bold tracking-tighter"
+                    id="quote-text-anim">
+                    
+                    <div class="flex items-center justify-center whitespace-nowrap">
+                        <span class="mix-blend-difference text-white">Your&nbsp;</span>
+                        <span class="inline-grid relative text-left" id="quote-top-dynamic"></span>
+                    </div>
+
+                    <div class="flex items-center justify-center whitespace-nowrap font-normal text-[#a3a3a3] italic"
+                        style="font-family: 'Instrument Serif', serif;">
+                        <span>Made&nbsp;</span>
+                        <span class="inline-grid relative text-left" id="quote-bottom-dynamic"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
         </section>
 
         <section id="process-pin-container"
-            class="w-full h-[100svh] md:h-screen relative z-20 bg-transparent overflow-hidden flex flex-col justify-center">
+            class="w-full h-[100svh] md:h-screen relative z-20 bg-transparent overflow-hidden flex flex-col justify-center max-md:-mt-12">
             <div class="w-full px-6 lg:px-12 z-10 pointer-events-none mb-6">
                 <h2 class="text-xs uppercase tracking-widest text-[#a3a3a3] font-mono line-mask">
                     <span class="line-mask-inner process-header-reveal flex items-center gap-3">
@@ -781,7 +818,7 @@
         </section>
 
         <footer id="contact"
-            class="w-full min-h-screen flex flex-col items-center justify-between bg-transparent text-[var(--fg)] relative overflow-hidden z-20 pt-24 pb-6">
+            class="w-full min-h-screen flex flex-col items-center justify-between bg-transparent text-[var(--fg)] relative overflow-hidden z-20 pt-24 pb-2 md:pb-6">
 
             <div id="physics-container" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></div>
 
@@ -808,24 +845,24 @@
             <div class="flex-grow"></div>
 
             <div id="footer-meta-bar"
-                class="relative z-30 flex flex-row items-center justify-between w-full px-6 lg:px-12 mt-auto text-meta pointer-events-none border-t border-[var(--fg)]/10 pt-6 pb-6">
+                class="relative z-30 flex flex-row flex-wrap items-center justify-between w-full px-6 lg:px-12 mt-auto text-meta pointer-events-none border-t border-[var(--fg)]/10 pt-6 pb-2 md:pb-6 gap-y-2 md:gap-y-0">
 
                 <div
-                    class="flex gap-4 lg:gap-8 pointer-events-auto text-[var(--fg)]/70 justify-start text-[10px] md:text-sm">
+                    class="flex gap-4 lg:gap-8 pointer-events-auto text-[var(--fg)]/70 justify-start text-[10px] md:text-sm w-auto">
                     <a href="#process-pin-container"
                         class="hover:text-[var(--fg)] hover-target transition-colors p-1 md:p-2">SERVICES</a>
                     <a href="#role-container"
                         class="hover:text-[var(--fg)] hover-target transition-colors p-1 md:p-2">SUBSCRIBE</a>
                 </div>
 
-                <div class="pointer-events-auto flex items-center justify-center">
+                <div class="pointer-events-auto flex items-center justify-end md:justify-center w-auto">
                     <img src="img/logo-svg.svg" alt="Franco Designio Logo"
                         class="h-3 md:h-4 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity">
                 </div>
 
                 <div
-                    class="pointer-events-auto text-[var(--fg)]/70 flex justify-end text-[10px] md:text-sm hidden md:block">
-                    <span class="font-serif text-sm tracking-wide normal-case text-[#a3a3a3]">
+                    class="pointer-events-auto text-[var(--fg)]/70 flex justify-end text-[10px] md:text-sm w-full md:w-auto order-last md:order-none">
+                    <span class="font-serif text-[13px] md:text-sm tracking-wide normal-case text-[#a3a3a3] text-right">
                         2026 Made with Rube Goldberg Machines & <i class="italic text-[var(--fg)]">Magic</i>
                     </span>
                 </div>
@@ -1630,7 +1667,7 @@
                     "Creative Technologist",
                     "Web Creator",
                     "UX/UI Specialist",
-                    "Frontend Developer",
+                    "Frontend Coder",
                 ];
 
                 const group2 = [
@@ -1789,8 +1826,116 @@
                 }
             }
 
-            // CRITICAL FIX: Run Rotating Titles unconditionally
-            initRotatingTitles();
+            // ==========================================
+            // ROTATING DYNAMIC QUOTES LOGIC (REFINED STAGGER & LAYOUT SHIFT)
+            // ==========================================
+            function initRotatingQuotes() {
+                const wordsTop = ["Essence", "Product", "Tools", "Workflow"];
+                const wordsBottom = ["Visible", "Inevitable", "Human", "Fluid"];
+
+                const topContainer = document.getElementById('quote-top-dynamic');
+                const bottomContainer = document.getElementById('quote-bottom-dynamic');
+                if (!topContainer || !bottomContainer) return;
+
+                // 1. Adiós a los Spacers: Limpiamos el HTML interno
+                topContainer.innerHTML = '';
+                bottomContainer.innerHTML = '';
+
+                const topElements = [];
+                const bottomElements = [];
+
+                function createElements(words, container, elementsArr) {
+                    words.forEach((word, index) => {
+                        const span = document.createElement('span');
+                        const initialClass = index === 0 ? 'quote-visible' : 'quote-hidden-bottom';
+                        span.className = `quote-wrapper ${initialClass}`;
+                        span.innerText = word;
+                        container.appendChild(span);
+                        elementsArr.push(span);
+                    });
+                }
+
+                createElements(wordsTop, topContainer, topElements);
+                createElements(wordsBottom, bottomContainer, bottomElements);
+
+                // Ajustamos el ancho inicial basado en la primera palabra (soporta fuentes fluidas)
+                gsap.set(topContainer, { width: topElements[0].scrollWidth });
+                gsap.set(bottomContainer, { width: bottomElements[0].scrollWidth });
+
+                let currentIndex = 0;
+                const CYCLE_TIME = 4000;
+                const STAGGER_DELAY = 0.3; // El "sweet spot" de 300ms
+
+                function updateQuote(container, elements, prevIndex, nextIndex) {
+                const elOut = elements[prevIndex];
+                const elIn = elements[nextIndex];
+
+                // 1. Forzamos visibilidad momentánea para medir el ancho real
+                elIn.style.visibility = 'hidden';
+                elIn.classList.remove('quote-hidden-bottom', 'quote-hidden-top');
+                elIn.classList.add('quote-visible');
+                
+                const targetWidth = elIn.offsetWidth;
+
+                // 2. Aplicamos el ancho al contenedor para que el centrado sea suave
+                gsap.to(container, {
+                    width: targetWidth,
+                    duration: 1.2,
+                    ease: "expo.inOut"
+                });
+
+                // 3. Restauramos para la animación
+                elIn.style.visibility = 'visible';
+                elIn.classList.remove('quote-visible');
+                elIn.classList.add('quote-hidden-bottom');
+
+                // Limpieza de otros elementos
+                elements.forEach((el, idx) => {
+                    if (idx !== nextIndex && idx !== prevIndex) {
+                        el.style.transition = 'none';
+                        el.classList.remove('quote-visible', 'quote-hidden-top');
+                        el.classList.add('quote-hidden-bottom');
+                    }
+                });
+
+                void container.offsetWidth; // Reflow
+
+                // Animación de salida (Arriba)
+                elOut.style.transition = 'all 1200ms cubic-bezier(0.16,1,0.3,1)';
+                elOut.classList.add('quote-hidden-top');
+                elOut.classList.remove('quote-visible');
+
+                // Animación de entrada (Desde abajo)
+                elIn.style.transition = 'all 1200ms cubic-bezier(0.16,1,0.3,1)';
+                elIn.classList.remove('quote-hidden-bottom');
+                elIn.classList.add('quote-visible');
+            }
+
+                // 2. Modificamos el loop para separar los tiempos (Stagger)
+                setInterval(() => {
+                    const prevIndex = currentIndex;
+                    currentIndex = (currentIndex + 1) % wordsTop.length;
+
+                    // Línea 1: Se ejecuta de inmediato
+                    updateQuote(topContainer, topElements, prevIndex, currentIndex);
+
+                    // Línea 2: Se ejecuta con el desfase de 300ms
+                    gsap.delayedCall(STAGGER_DELAY, () => {
+                        updateQuote(bottomContainer, bottomElements, prevIndex, currentIndex);
+                    });
+
+                }, CYCLE_TIME);
+
+                // Seguro para mantener la fluidez si el usuario redimensiona la ventana
+                window.addEventListener('resize', () => {
+                    gsap.set(topContainer, { width: topElements[currentIndex].scrollWidth });
+                    gsap.set(bottomContainer, { width: bottomElements[currentIndex].scrollWidth });
+                });
+            }
+
+            // Initialize both the titles and the new dynamic quotes
+                initRotatingTitles();
+                initRotatingQuotes();
 
 
             // =======================================================
@@ -1857,26 +2002,51 @@
             function initScrollAnimations() {
                 const isMobile = window.innerWidth < 768;
 
+                // 1. Desvanecer textos del Hero
                 gsap.to('.hero-fade-text', {
                     opacity: 0,
                     pointerEvents: 'none',
-                    scrollTrigger: { trigger: 'body', start: 'top top', end: isMobile ? '120px' : '200px', scrub: true }
+                    scrollTrigger: { 
+                        trigger: 'body', 
+                        start: 'top top', 
+                        end: '150px', 
+                        scrub: true 
+                    }
                 });
 
-                const quoteText = document.getElementById("quote-text-anim");
-                if (quoteText) {
-                    if (isMobile) {
-                        gsap.to(quoteText, { opacity: 1, y: 0, ease: "none", scrollTrigger: { trigger: 'body', start: '130px', end: '280px', scrub: true } });
-                    } else {
-                        gsap.to(quoteText, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: "#quote-marquee-section", start: "top 80%", toggleActions: "play none none reverse" } });
-                    }
-                }
-
+                // 2. Aparecer el Marquee (Sincronizado con el Hero)
                 const mobileMarquee = document.getElementById("mobile-marquee");
                 if (mobileMarquee && isMobile) {
-                    gsap.to(mobileMarquee, { opacity: 1, y: 0, scrollTrigger: { trigger: 'body', start: '250px', end: '400px', scrub: true } });
+                    gsap.to(mobileMarquee, { 
+                        opacity: 1, 
+                        y: 0, 
+                        scrollTrigger: { 
+                            trigger: 'body', 
+                            start: 'top top', 
+                            end: '100px', // CAMBIO: Entra por completo en los primeros 100px de scroll
+                            scrub: true 
+                        } 
+                    });
                 }
 
+                // 3. Aparecer la Quote
+                const quoteAnim = document.getElementById("quote-text-anim");
+                if (quoteAnim) {
+                    gsap.set(quoteAnim, { opacity: 0, y: 60 });
+                    
+                    gsap.to(quoteAnim, { 
+                        opacity: 1, 
+                        y: 0, 
+                        duration: 1.5, 
+                        ease: "power4.out", 
+                        scrollTrigger: { 
+                            trigger: "#quote-marquee-section", 
+                            start: "top 85%", 
+                            toggleActions: "play none none reverse" 
+                        } 
+                    });
+                }
+                
                 // GLOBAL STATE: Add this right at the start of initScrollAnimations()
                 window.eyeDockState = window.eyeDockState || { progress: 0 };
 
@@ -1992,7 +2162,7 @@
                         let tl = gsap.timeline({
                             scrollTrigger: {
                                 trigger: processPin,
-                                start: "center center",
+                                start: "center 60%",
                                 end: () => `+=${totalScroll * 1.5}`,
                                 pin: true,
                                 scrub: 0.8,
@@ -2017,6 +2187,21 @@
                             })
                                 .addLabel(`card${i}`)
                                 .to({}, { duration: 0.15 });
+                        }
+
+                        // --- NUEVO: PARALLAX PARKING DE LA QUOTE (SOLO MOBILE) ---
+                        const quoteTextContainer = document.getElementById("quote-marquee-text");
+                        if (quoteTextContainer) {
+                            // Subimos el z-index por seguridad para que flote sobre las tarjetas si llegan a rozarse
+                            gsap.set(quoteTextContainer, { zIndex: 50 });
+                            
+                            ScrollTrigger.create({
+                                trigger: quoteTextContainer,
+                                start: "top 12%", // Se estaciona dejando un respiro debajo del header
+                                end: () => tl.scrollTrigger.end, // MAGIA: Toma el tiempo de salida exacto del slider de las tarjetas
+                                pin: true,
+                                pinSpacing: false // CRÍTICO: Permite que el slider horizontal suba e invada su espacio sin crear márgenes en blanco
+                            });
                         }
                     });
                 }
