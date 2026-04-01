@@ -1534,8 +1534,8 @@
                                     if (mixedIntensity < 0) mixedIntensity = 0; else if (mixedIntensity > 1) mixedIntensity = 1;
 
                                     charToDraw = HOVER_CHARS[Math.floor(mixedIntensity * HOVER_CHARS_LEN)];
-                                    alphaToDraw = mixedIntensity * 0.8;
-                                    if (alphaToDraw > 0.3) alphaToDraw = 0.3;
+                                    alphaToDraw = mixedIntensity * 0.3; //ASCII background effect opacity 0.8 to 0.3
+                                    if (alphaToDraw > 0.15) alphaToDraw = 0.15; // 0.3 to 0.15
                                 }
                             }
 
