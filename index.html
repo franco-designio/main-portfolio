@@ -860,8 +860,8 @@
             </div>
 
             <div
-                class="absolute top-[10%] max-md:top-[48%] flex flex-col items-center justify-center z-30 pointer-events-none w-full gap-4">
-                <button id="cta-start-project" aria-label="Start Project"
+                class="absolute top-[20%] max-md:top-[44%] flex flex-col items-center justify-center z-30 pointer-events-none w-full gap-4">
+                <button id="cta-start-project" aria-label="Tell Me About Your Vision"
                     class="opacity-0 pointer-events-none bg-[rgba(10,10,10,0.4)] backdrop-blur-sm px-[clamp(24px,2.5vw,32px)] py-[clamp(16px,1.5vw,20px)] min-h-[44px] min-w-[44px] border border-white/10 rounded font-sans font-semibold tracking-widest text-sm text-[#a3a3a3] hover:scale-105 hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-all duration-300 shadow-lg">
                     Tell Me About Your Vision
                 </button>
@@ -2335,7 +2335,7 @@
                     const height = container.clientHeight;
 
                     const isMobile = window.innerWidth < 768;
-                    const blockAdjust = isMobile ? { x: 0, y: 48 } : { x: 0, y: -24 }; //Position Adjustment Falling letters block - isMobile ? { Ajustes Mobile } : { Ajustes Desktop };
+                    const blockAdjust = isMobile ? { x: 0, y: 120 } : { x: 0, y: 24 }; //Position Adjustment Falling letters block - isMobile ? { Ajustes Mobile } : { Ajustes Desktop };
 
                     const containerRect = container.getBoundingClientRect();
                     const metaRect = metaBar.getBoundingClientRect();
@@ -2393,7 +2393,7 @@
                             isStatic: true
                         });
 
-                        // Falling Letters Block Position Adjustment (Handled by blockAdjust above)
+                        // Falling Letters Block Position Adjustment (Handled by block Adjust above)
                         letters.push({ 
                             element: clone, 
                             body: body, 
@@ -2509,7 +2509,7 @@
                             });
 
                             reassemblePromise.then(() => {
-                                window.open("https://francodesignio.notion.site/99f7ea323bbe82d1991081a507e15493?pvs=105", "_blank", "noopener,noreferrer");
+                                // window.open("https://francodesignio.notion.site/99f7ea323bbe82d1991081a507e15493?pvs=105", "_blank", "noopener,noreferrer");
 
                                 gsap.to(newCtaBtn, { opacity: 0, duration: 0.5 });
 
@@ -2527,7 +2527,7 @@
                                     });
 
                                     setTimeout(() => {
-                                        newCtaBtn.innerHTML = 'Start Project';
+                                        newCtaBtn.innerHTML = 'Tell Me About Your Vision';
                                         gsap.to(newCtaBtn, { opacity: 1, duration: 0.5, onComplete: () => newCtaBtn.style.pointerEvents = "auto" });
                                     }, 1000);
 
